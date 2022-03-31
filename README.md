@@ -1,1 +1,3 @@
-# react-redux
+# React e Redux
+
+
