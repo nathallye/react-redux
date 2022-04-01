@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 export default function ComParametros(props) {
   // console.log(props);
 
-  const status = props.nota >= 7 ? 'Aprovado' : 'em Recuperação' // se a nota recebida for maior ou igual 7 o status será 'Aprovado' senão 'em Recuperação'
+  const status = props.nota >= 7 ? "Aprovado" : "em Recuperação"; // se a nota recebida for maior ou igual 7 o status será 'Aprovado' senão 'em Recuperação'
 
   return (
     <div>
@@ -17,5 +17,5 @@ export default function ComParametros(props) {
       </p>
       
     </div>
-  )
+  );
 }

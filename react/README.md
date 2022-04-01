@@ -59,15 +59,15 @@ Precisamos que o index.js interaja com uma biblioteca chamada React DOM - Docume
 - Para isso vamos importar o React DOM no nosso arquivo index.js:
 
 ``` JavaScript
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
       [nome_variavel] [nome_módulo]
 ```
 
 A partir do React DOM vamos renderizar "algo" na tela. Então vamos chamá-lo junto ao método render. Esse método recebe dois parâmetros, o primeiro é o que queremos renderizar na tela e o segundo é o elemento o qual queremos inserir esse conteúdo.
 
 ``` JavaScript
-const elDivBody = document.getElementById('root');
-ReactDOM.render('Olá React!', elDivBody);
+const elDivBody = document.getElementById("root");
+ReactDOM.render("Olá React!", elDivBody);
 ```
 
 ## Conhecendo o JSX
@@ -85,14 +85,14 @@ import React from 'react'
 - Podemos agora, alterar o código da exibição da string, e envolvelá dinamicamente com uma div, usando código JavaScript com o JSX:
 
 ``` JavaScript
-const elDivBody = document.getElementById('root');
+const elDivBody = document.getElementById("root");
 ReactDOM.render(<div>Olá React!</div>, elDivBody);
 ```
 
 Outras possibilidades:
 
 ``` JavaScript
-const elDivBody = document.getElementById('root');
+const elDivBody = document.getElementById("root");
 const tag = <strong>Olá React!</strong>
 
 ReactDOM.render(
@@ -110,7 +110,7 @@ Na **pasta src, vamos criar o arquivo index.css**.
 - Vamos importar(import relative) esse arquivo dentro de index.js:
 
 ``` JavaScript
-import './index.css'; // não atribuimos um nome a esse import, pois não vamos acessar nada(nenhum componente) desse arquivo, só queremos que nossa aplicação seja capaz de carregá-lo
+import "./index.css"; // não atribuimos um nome a esse import, pois não vamos acessar nada(nenhum componente) desse arquivo, só queremos que nossa aplicação seja capaz de carregá-lo
 ```
 
 ## Primeiro componente
@@ -124,7 +124,7 @@ Dentro de **components** vamos criar uma pasta **basics**, para deixá-los bem o
 
 ``` JavaScript
 function Primeiro() {
-  return 'Primeiro Componente';
+  return "Primeiro Componente";
 }
 ```
 
@@ -132,20 +132,20 @@ function Primeiro() {
 
 ``` JavaScript
 export default function Primeiro() {
-  return 'Primeiro Componente';
+  return "Primeiro Componente";
 }
 ```
 
 - No arquivo index.js vamos importar essa Função:
 
 ``` JavaScript
-import Primeiro from './components/basics/First';
+import Primeiro from "./components/basics/First";
 ```
 
 - E referenciar esse componente para que ele seja renderizado na tela:
 
 ``` JavaScript
-const elDivBody = document.getElementById('root');
+const elDivBody = document.getElementById("root");
 
 ReactDOM.render(
   <div>
@@ -159,14 +159,14 @@ ReactDOM.render(
 Primeiro, é necessário que seja feita a importação do React dentro do componente para o JSX seja interpretado:
 
 ``` JavaScript
-import React from 'react';
+import React from "react";
 
 export default function Primeiro() {
   return (
     <div>
       <h2>Primeiro componente com JSX</h2>
     </div>
-  )
+  );
 }
 ```
 
@@ -182,7 +182,7 @@ Também existe os componentes baseados em classe.
 - No componente WithParams vamos criar uma função com alguns elementos(mas antes vamos importar o React para evitar erros):
 
 ``` JavaScript
-import React from 'react';
+import React from "react";
 
 export default function ComParametros() {
   return (
@@ -190,7 +190,7 @@ export default function ComParametros() {
       <h2>titulo</h2>
       <h3>subtitulo</h3>
     </div>
-  )
+  );
 }
 ```
 
@@ -199,7 +199,7 @@ Nota-se que o retorno dessa função/componente espera receber o titulo e o subt
 - Para isso, nossa função vai receber esses parâmetros, que por padrão no React são chamados de **props**: 
 
 ``` JavaScript
-import React from 'react';
+import React from "react";
 
 export default function ComParametros(props) {
   return (
@@ -207,7 +207,7 @@ export default function ComParametros(props) {
       <h2>{ props.titulo }</h2>
       <h3>{ props.subtitulo }</h3> // chaves "{}" para interpretar o código, não somente renderizar
     </div>
-  )
+  );
 }
 ```
 
@@ -216,15 +216,15 @@ export default function ComParametros(props) {
 - E no arquivo index.js vamos importar, renderizar esse componente e passar as props:
 
 ``` JavaScript
-import ComParametros from './components/basics/WithParams';
+import ComParametros from "./components/basics/WithParams";
 
-const elDivBody = document.getElementById('root');
+const elDivBody = document.getElementById("root");
 
 ReactDOM.render(
   <div>
     <ComParametros
-      titulo='Curso React'
-      subtitulo='Aula Fundamentos do React'/>
+      titulo="Curso React"
+      subtitulo="Aula Fundamentos do React"/>
   </div>,
   elDivBody
 );
@@ -237,4 +237,269 @@ console.log(props);
 
 // Retorno =>
 {titulo: 'Curso React', subtitulo: 'Aula Fundamentos do React'}
+```
+
+## React Fragment
+
+Quando não envolvemos o código JSX com algum elemento é retornado o segunte erro: Adjacent JSX elements must be wrapped in an enclosing tag(Elementos JSX adjacentes devem ser agrupados em uma tag delimitadora).
+
+- Como exemplo dentro de components/basics vamos criar um componente chamado Fragment:
+
+``` JavaScript
+import React from "react";
+
+export default function Fragmento(props) {
+  return (
+    <div>
+      <h2>Fragmento</h2>
+      <p>Cuidado com esse erro!</p>
+    </div>
+  );
+}
+```
+
+Podemos notar que o conteúdo JSX está sendo delimitado por um elemento do tipo div. 
+
+- Caso não queiramos que esse elemento seja colocado dentro de div, podemos usar o React Fragment:
+
+``` JavaScript
+import React from "react";
+
+export default function Fragmento(props) {
+  return (
+    <React.Fragment>
+      <h2>Fragmento</h2>
+      <p>Cuidado com esse erro!</p>
+    </React.Fragment>
+  );
+}
+```
+
+- Ou sua sintaxe reduzida:
+
+``` JavaScript
+import React from "react";
+
+export default function Fragmento(props) {
+  return (
+    <>
+      <h2>Fragmento</h2>
+      <p>Cuidado com esse erro!</p>
+    </>
+  );
+}
+```
+
+Com a sintaxe reduzida, só não é possível utilizar atributos extras.
+
+## Componente App
+
+- Na pasta **src** vamos criar um componente chamado **App** que vai **representar a nossa aplicação**.
+
+- Vamos usar esse componente para enxugar os códigos JSX de index.js(vamos trazer junto todos os imports):
+
+``` JavaScript
+import React from "react";
+
+import Primeiro from "./components/basics/First";
+import ComParametros from "./components/basics/WithParams";
+import Fragmento from "./components/basics/Fragment";
+
+export default function App(props) {
+  return (
+    <div>
+      <Primeiro/>
+      <ComParametros
+        titulo="Situação do aluno:"
+        aluno="João"
+        nota={9.2}
+      />
+      <ComParametros
+        titulo="Situação da aluna:"
+        aluno="Maria"
+        nota={5.8}
+      />
+      <Fragmento/>
+    </div>
+  );
+}
+```
+
+- No arquivo index.js, vamos importar e renderizar App:
+
+``` JavaScript
+import App from "./App";
+
+const elDivBody = document.getElementById("root");
+
+ReactDOM.render(
+  <App/>,
+  elDivBody
+);
+```
+
+A partir de agora não vamos mais mexer em index.js, vamos utilizar dessa referência a App.jsx.
+
+- Forma mais reduzida de declarar funções é usando **arrow function**:
+
+``` JavaScript
+export default (props) => {
+  return (
+    <div>
+      <Primeiro/>
+      <ComParametros
+        titulo="Situação do aluno:"
+        aluno="João"
+        nota={9.2}
+      />
+      <ComParametros
+        titulo="Situação da aluna:"
+        aluno="Maria"
+        nota={5.8}
+      />
+      <Fragmento/>
+    </div>
+  );
+}
+```
+
+- Quando a função tem apenas **um parâmetro**, podemos **tirar os parênteses**:
+
+``` JavaScript
+export default props => {
+  return (
+    <div>
+      <Primeiro/>
+      <ComParametros
+        titulo="Situação do aluno:"
+        aluno="João"
+        nota={9.2}
+      />
+      <ComParametros
+        titulo="Situação da aluna:"
+        aluno="Maria"
+        nota={5.8}
+      />
+      <Fragmento/>
+    </div>
+  );
+}
+```
+
+- Quando a função não tem **nenhum parâmetro**, podemos **usar apenas os parênteses vazio ()**:
+
+``` JavaScript
+export default () => {
+  return (
+    <div>
+      <Primeiro/>
+      <ComParametros
+        titulo="Situação do aluno:"
+        aluno="João"
+        nota={9.2}
+      />
+      <ComParametros
+        titulo="Situação da aluna:"
+        aluno="Maria"
+        nota={5.8}
+      />
+      <Fragmento/>
+    </div>
+  );
+}
+```
+
+- Quando a função tem apenas **um parâmetro** e não vamos usá-la, podemos **usar apenas o _**:
+
+``` JavaScript
+export default _ => {
+  return (
+    <div>
+      <Primeiro/>
+      <ComParametros
+        titulo="Situação do aluno:"
+        aluno="João"
+        nota={9.2}
+      />
+      <ComParametros
+        titulo="Situação da aluna:"
+        aluno="Maria"
+        nota={5.8}
+      />
+      <Fragmento/>
+    </div>
+  );
+}
+```
+
+- Podemos tirar o corpo da arrow function e de forma implicita tudo que está dentro da função vai ser retornado, portanto, não é necessário utilizar a palavra reservada return:
+
+``` JavaScript
+export default () => (
+  <div>
+    <Primeiro/>
+    <ComParametros
+      titulo="Situação do aluno:"
+      aluno="João"
+      nota={9.2}
+    />
+    <ComParametros
+      titulo="Situação da aluna:"
+      aluno="Maria"
+      nota={5.8}
+    />
+    <Fragmento/>
+  </div>
+);
+```
+
+## Class com JSX
+
+Diferente do html que para atribuir uma classe css para um elemento especificamos class="", no jsx como "class" é uma palavra reservada do JavaScript, usa-se className="".
+
+``` JavaScript
+export default function Card(props) {
+  return (
+    <div className="Card">
+      <div>{props.titulo}</div>
+      <div>Conteúdo</div>
+    </div>
+  );
+}
+```
+
+## Componente com filho
+
+Quando quisermos referênciar um componente dentro de outro, vamos usar props.children, para resgatar os filhos que são passados dentro de determinado componente(componentes passados dentro do corpo de outro componente). 
+
+- No código abaixo o componente Card tem o componente filho Primeiro dentro dele:
+
+``` JavaScript
+export default function App(props) {
+  return (
+    <div className="App">
+      <h1>Fundamentos React</h1>
+
+      <Card titulo="Exemplo de Card">
+        <Primeiro/>
+      </Card>
+  )
+```
+
+Importante resaltar que quando estamos trabalhando com componentes filhos, devemos fechar a tag do componente pai da forma completa. 
+
+- E para recuperar os filhos de dentro de Card e renderizar seus conteúdos, vamos utilizar o props.children dentro do arquivo do componente Card (Card.jsx):
+
+``` JavaScript
+import "./Card.css";
+import React from "react";
+
+export default function Card(props) {
+  return (
+    <div className="Card">
+      <div className="Title">{props.titulo}</div>
+      <div className="Content">{props.children}</div>
+    </div>
+  );
+}
 ```

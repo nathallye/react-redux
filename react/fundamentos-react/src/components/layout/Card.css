@@ -1,0 +1,28 @@
+.Card{
+  border: 3px solid;
+
+  margin: 5px;
+  border-radius: 10px;
+  overflow: hidden; /*overflow: Propriedade especifica se o conteúdo deve ser recortado ou adicionado barras de rolagem; hidden: O estouro é cortado e o restante do conteúdo ficará invisível*/
+
+  display: flex; /*flex-direction por padrão é row*/
+  flex-direction: column;
+  min-width: 500px;
+  max-width: 500px;
+}
+
+.Card .Title{
+  padding: 5px 0px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.Card .Content{
+  background-color: #fff;
+  color: #000;
+  padding: 10px;
+
+  flex: 1; /* Esta propriedade é um atalho de escrita para: grow, shrink e basis. 
+  flex 1 é igual a grow: 1 (proporcionalidade de crescimentos dos itens, respeitando o tamanho de seus conteúdos internos), shrink: 1 (fator de compressão), basis: 0 (não há quebra do item) */
+}
