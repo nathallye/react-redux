@@ -503,3 +503,84 @@ export default function Card(props) {
   );
 }
 ```
+
+- Agora temos um componente Familia que recebe em seu escopo o Componente MembroFamilia:
+
+``` JavaScript
+import React from "react";
+import MembroFamilia from "./FamilyMember";
+
+export default function Familia(props) {
+  
+  return (
+    <div>
+      <MembroFamilia nome="Nathallye" sobrenome="Bacelar" />
+      <MembroFamilia nome="Paulo" sobrenome="Bacelar" />
+      <MembroFamilia nome="Maria" sobrenome="Bacelar" />
+    </div>
+  );
+}
+```
+
+``` JavaScript
+import React from "react";
+
+export default function MembroFamilia(props) {
+  
+  return (
+    <div>
+      {props.nome} <strong>{props.sobrenome}</strong>
+    </div>
+  );
+}
+```
+
+- Nota-se que estamos passando o sobrenome para todos os elementos, mas isso não é necessário, pois todos tem o mesmo sobrenome por serem parte da mesma familia. Uma saída seria passar esse parâmetro do componente Pai, ou seja, na renderização do componente Família(em App.jsx).
+
+``` JavaScript
+    <div>
+      //[...]
+
+      <Card titulo="#05 - Componente com Filhos" color="#86BAAB">
+        <Familia sobrenome="Ferraz"/>
+      </Card>
+
+    </div>
+```
+
+- Mas isso não vai funcionar ainda, pois o parâmetro do componente pai não é passado automáticamente para o componente filho. A forma mais simples de fazer funcionar é resgatar essa propriede que está sendo enviada pelo componente pai(props.sobrenome) no componente filho:
+
+``` JavaScript
+import React from "react";
+import MembroFamilia from "./FamilyMember";
+
+export default function Familia(props) {
+  
+  return (
+    <div>
+      <MembroFamilia nome="Nathallye" sobrenome={props.sobrenome} />
+      <MembroFamilia nome="Paulo" sobrenome={props.sobrenome} />
+      <MembroFamilia nome="Maria" sobrenome={props.sobrenome} />
+    </div>
+  );
+}
+```
+
+- Outra forma que temos como fazer isso é usando o operador spred para pegar todas as propriedade passadas para esse componente filho:
+
+``` JavaScript
+import React from "react";
+import MembroFamilia from "./FamilyMember";
+
+export default function Familia(props) {
+  
+  return (
+    <div>
+      <MembroFamilia nome="Nathallye" {...props} />
+      <MembroFamilia nome="Paulo" {...props} />
+      <MembroFamilia nome="Maria" {...props} />
+    </div>
+  );
+}
+```
+

@@ -1,11 +1,13 @@
 import "./App.css"
 import React from "react";
 
+import Card from "./components/layout/Card";
+
 import Primeiro from "./components/basics/First";
 import ComParametros from "./components/basics/WithParams";
 import Fragmento from "./components/basics/Fragment";
 import Aleatorio from "./components/basics/GetRandom";
-import Card from "./components/layout/Card";
+import Familia from "./components/basics/Family";
 
 export default function App(props) {
   return (
@@ -40,6 +42,10 @@ export default function App(props) {
             min={1} 
             max={60}
           />
+        </Card>
+
+        <Card titulo="#05 - Componente com Filhos" color="#86BAAB">
+          <Familia sobrenome="Ferraz" />
         </Card>
       </div>
     </div>
