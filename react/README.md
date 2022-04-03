@@ -538,8 +538,12 @@ export default function MembroFamilia(props) {
 - Nota-se que estamos passando o sobrenome para todos os elementos, mas isso não é necessário, pois todos tem o mesmo sobrenome por serem parte da mesma familia. Uma saída seria passar esse parâmetro do componente Pai, ou seja, na renderização do componente Família(em App.jsx).
 
 ``` JavaScript
+// [...]
+import Familia from "./components/basics/Family";
+
+  // [...]
     <div>
-      //[...]
+      // [...]
 
       <Card titulo="#05 - Componente com Filhos" color="#86BAAB">
         <Familia sobrenome="Ferraz"/>
@@ -579,6 +583,115 @@ export default function Familia(props) {
       <MembroFamilia nome="Nathallye" {...props} />
       <MembroFamilia nome="Paulo" {...props} />
       <MembroFamilia nome="Maria" {...props} />
+    </div>
+  );
+}
+```
+
+E se quisermos passar os componentes filhos de forma literal na renderização do componente Pai?
+
+- Nesse caso dentro do nosso arquivo principal, App.jsx:
+
+``` JavaScript
+// [...]
+import Familia from "./components/basics/Family";
+import MembroFamilia from "./components/basics/FamilyMember"
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#05 - Componente com Filhos" color="#86BAAB">
+        <Familia sobrenome="Ferraz">
+          <MembroFamilia nome="Nathallye" sobrenome={props.sobrenome} />
+        </Familia>
+      </Card>
+
+    </div>
+```
+
+- E apenas referenciar os filhos dentro do arquivo do Componente pai(Familia.jsx) a partir de props.children:
+
+``` JavaScript
+import React from "react";
+
+export default function Familia(props) {
+  
+  return (
+    <div>
+      {props.children}
+    </div>
+  );
+}
+```
+
+Quando salvarmos, isso vai gerar um problema, pois não temos props em nenhum local. Não estamos recebendo props e não temos como pegar as propriedades que estão sendo passadas no componente pai(que nesse caso é sobrenome) para o componente filho (sobrenome={props.sobrenome}), não é assim que funciona.
+
+- Para o componente filho receber as props do componente pai, é necessário que dentro do arquivo do componente Pai seja implementando algumas alterações. Sabemos que dentro de chaves "{}" podemos inserir código javascript e acessar seus métodos, assim também podemos acessar os métodos do react("React."). Existe um método chamado choneElement, ele vai clonar um elemento("React.cloneElement()"), e dentro dele vamos passar o elemento props.children(que nada mais é que as propriedades do elemento filho).
+
+``` JavaScript
+import React from "react";
+
+export default function Familia(props) {
+  return (
+    <div>
+      {React.cloneElement(props.children)}
+    </div>
+  );
+}
+```
+
+- Para o cloneElement além de passarmos o elemento, podemoos passar como segundo parâmetro as props(para clonar as propriedade):
+
+``` JavaScript
+import React from "react";
+//import React, { cloneElement } from "react"; quando usamos o import assim não precisamos expecificar o React antes do método(React.cloneElement)
+
+export default function Familia(props) {
+  return (
+    <div>
+      {React.cloneElement(props.children, props)} 
+    </div>
+  );
+}
+```
+
+Mas isso vale somente quando temos apenas um componente filho, quando há mais de um ocorre um erro.
+
+- Podemos contornar esse erro, usando o map:
+
+``` JavaScript
+import React, { cloneElement } from "react";
+
+export default function Familia(props) {
+
+  return (
+    <div>
+      {
+        React.Children.map(props.children, (child) => { // recebemos a lista de todos os filhos epara cada filho vamos chamar a função que recebe cada um dos filhos
+          return cloneElement(child, props); // e essa função retorna para cada item o clone do elemetro filho(nomes) e passa as propriedades que foi enviada pelo elemento pai(sobrenome) para o elemento clonado
+        })
+      }
+    </div>
+  );
+}
+```
+
+- Como o props.childer e um objeto que contem todos as propriedades que são passadas aos filhos, podemos usar o método map diretamente nele, simplificando o código:
+
+``` JavaScript
+import React, { cloneElement } from "react";
+
+export default function Familia(props) {
+  
+  return (
+    <div>
+      {
+        props.children.map((child) => { 
+          return cloneElement(child, props); 
+        })
+      }
     </div>
   );
 }

@@ -8,6 +8,7 @@ import ComParametros from "./components/basics/WithParams";
 import Fragmento from "./components/basics/Fragment";
 import Aleatorio from "./components/basics/GetRandom";
 import Familia from "./components/basics/Family";
+import MembroFamilia from "./components/basics/FamilyMember"
 
 export default function App(props) {
   return (
@@ -45,7 +46,11 @@ export default function App(props) {
         </Card>
 
         <Card titulo="#05 - Componente com Filhos" color="#86BAAB">
-          <Familia sobrenome="Ferraz" />
+          <Familia sobrenome="Ferraz">
+            <MembroFamilia nome="Nathallye" />
+            <MembroFamilia nome="Paulo" />
+            <MembroFamilia nome="Maria" />
+          </Familia>
         </Card>
       </div>
     </div>
