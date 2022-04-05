@@ -9,6 +9,8 @@ import Fragmento from "./components/basics/Fragment";
 import Aleatorio from "./components/basics/GetRandom";
 import Familia from "./components/basics/Family";
 import MembroFamilia from "./components/basics/FamilyMember"
+import ListaAlunos from "./components/repeticao/ListStudents";
+import TabelaProdutos from "./components/repeticao/TableProduts";
 
 export default function App(props) {
   return (
@@ -51,6 +53,14 @@ export default function App(props) {
             <MembroFamilia nome="Paulo" />
             <MembroFamilia nome="Maria" />
           </Familia>
+        </Card>
+
+        <Card titulo="#06 - Repetição" color="#00804E">
+          <ListaAlunos/>
+        </Card>
+
+        <Card titulo="#07 - Desafio Repetição" color="#CCCC79">
+          <TabelaProdutos/>
         </Card>
       </div>
     </div>
