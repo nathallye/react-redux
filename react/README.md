@@ -697,3 +697,182 @@ export default function Familia(props) {
 }
 ```
 
+## Renderização condicional
+
+- Vamos criar um componente para renderizar um número e mostrar se ele é ímpar ou par:
+
+``` JavaScript
+import React from "react";
+
+export default function ParOuImpar(props) {
+  return (
+    <div>
+      <span>Par</span>
+      <span>Ímpar</span>
+    </div>
+  )
+}
+```
+
+- E dentro do arquivo principal de renderização(App.jsx) vamos renderizar esse componente e passar um número como propriedade:
+
+``` JavaScript
+// [...]
+import ParOuImpar from "./components/conditional/EvenOrOdd";
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#08 - Renderização condicional" color="#006400">
+          <ParOuImpar numero={20}/>
+      </Card>
+
+    </div>
+```
+
+Até agora, não há nenhuma lógica que faça esse número ser renderizado como ímpar ou par.
+
+- Para isso, vamos criar uma constante para saber se o número é par:
+
+``` JavaScript
+import React from "react";
+
+export default function ParOuImpar(props) {
+  const isPar = props.numero % 2 === 0;
+
+  return (
+    <div>
+      <span>Par</span>
+      <span>Ímpar</span>
+    </div>
+  )
+}
+```
+
+- E vamos usar essa variável dentro de um par de chaves para ser interpretado como código javascript e dentro vamos criar uma operação ternária((?)se caso for par vai ser renderizado <span>Par</span> (:)senão vai ser renderizado <span>Ímpar</span>):
+
+``` JavaScript
+import React from "react";
+
+export default function ParOuImpar(props) {
+  const isPar = props.numero % 2 === 0;
+
+  return (
+    <div>
+      { isPar ? <span>Par</span> : <span>Ímpar</span>}
+    </div>
+  )
+}
+```
+
+- Também é possível criarmos um componente e a partir desse componente conseguimos renderizar um trecho de jsx ou não. Para exemplificar, vamos criar um  componente chamado If.
+
+- Esse componente funcional vai receber como propriedade um expressão(verdadeira ou falsa), caso seja verdadeira vai retornar o seu corpo, ou seja, os filhos desse componente:
+
+``` JavaScript
+export default function If(props) {
+  if(props.test) {
+    return props.children
+  } else {
+    return false
+  }
+}
+```
+
+- Vamos testar criando um outro componente UsuarioInfo. 
+Dentro desse componente funcional, vamos retornar uma div com as informações do usuário:
+
+``` JavaScript
+import React from "react";
+
+export default function UsuarioInfo(props) {
+  return (
+    <div>
+      Seja bem vindo <strong>{ props.usuario.nome }</strong>!
+    </div>
+  );
+}
+```
+
+Vamos passar o usuário, e uma vez passado o usuário vamos mostrar de forma condicional. Caso não tenha um usuário, vamos retornar um outro trecho de código.
+
+- No arquivo de renderização principal(App.jsx), vamos importar esse componente e inserir esse componente dentro de um card, e passar como propriedade um objeto que representa usuario:
+
+``` JavaScript
+// [...]
+import UsuarioInfo from "./components/conditional/UserInfo";
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#08 - Renderização condicional" color="#006400">
+          <ParOuImpar numero={20}/>
+          <UsuarioInfo usuario={{ nome: 'Fernando' }}/> {/*o primeiro par de chaves"{}" é para ter um trecho que vai ser interpretado com javascript; se queremos criar um objeto de forma literal temos que colocar um outro par de chaves, dentro.*/}
+      </Card>
+
+    </div>
+```
+
+- Para evitar erros, podemos colocar props.usuario dentro de uma constante e passar um valor padrão caso não seja passado nada:
+
+``` JavaScript
+import React from "react";
+
+export default function UsuarioInfo(props) {
+  const usuario = props.usuario || {}
+
+  return (
+    <div>
+      Seja bem vindo <strong>{ usuario.nome }</strong>!
+    </div>
+  );
+}
+```
+
+- Agora, podemos importar o componente funcional If que vai receber como propriedade um expressão. 
+E vamos inserir esse componente If e colocar a mesagem para o usuário dentro do corpo dele. 
+Dentro das chaves, vamos inserir a expressão que vai verificar se o usuário está setado && se o nome do usuário é válido(diferente de null/vazio):
+
+``` JavaScript
+import React from "react";
+import If from "./If";
+
+export default function UsuarioInfo(props) {
+  const usuario = props.usuario || {}
+
+  return (
+    <div>
+      <If test={usuario && usuario.nome}>
+        Seja bem vindo <strong>{ usuario.nome }</strong>!
+      </If>
+    </div>
+  );
+}
+```
+
+- Podemos também criar um outro trecho que vai validar o contrário e retornar outro trecho de código... se não tiver usuário(!usuario) OU(||) o nome do usuário não for válido(!usuario.nome):
+
+``` JavaScript
+import React from "react";
+import If from "./If";
+
+export default function UsuarioInfo(props) {
+  const usuario = props.usuario || {}
+
+  return (
+    <div>
+      <If test={usuario && usuario.nome}>
+        Seja bem vindo <strong>{ usuario.nome }</strong>!
+      </If>
+      <If test={!usuario || !usuario.nome}>
+        Seja bem vindo <strong>Fulano</strong>!
+      </If>
+    </div>
+  );
+}
+```
+

@@ -9,8 +9,10 @@ import Fragmento from "./components/basics/Fragment";
 import Aleatorio from "./components/basics/GetRandom";
 import Familia from "./components/basics/Family";
 import MembroFamilia from "./components/basics/FamilyMember"
-import ListaAlunos from "./components/repeticao/ListStudents";
-import TabelaProdutos from "./components/repeticao/TableProduts";
+import ListaAlunos from "./components/repetition/ListStudents";
+import TabelaProdutos from "./components/repetition/TableProduts";
+import ParOuImpar from "./components/conditional/EvenOrOdd";
+import UsuarioInfo from "./components/conditional/UserInfo";
 
 export default function App(props) {
   return (
@@ -61,6 +63,14 @@ export default function App(props) {
 
         <Card titulo="#07 - Desafio Repetição" color="#CCCC79">
           <TabelaProdutos/>
+        </Card>
+
+        <Card titulo="#08 - Renderização condicional" color="#006400">
+          <ParOuImpar numero={20}/>
+          <UsuarioInfo usuario={{ nome: 'Fernando' }}/> {/*o primeiro par de chaves"{}" é para ter um trecho que vai ser interpretado com javascript; se queremos criar um objeto de forma literal temos que colocar um outro par de chaves, dentro.*/}
+          <UsuarioInfo usuario={{ email: 'fer@nando.com' }}/>
+          <UsuarioInfo usuario={{}}/>
+          <UsuarioInfo/>
         </Card>
       </div>
     </div>
