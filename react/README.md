@@ -876,3 +876,323 @@ export default function UsuarioInfo(props) {
 }
 ```
 
+## Comunição Direta
+
+A nossa aplicação em React é uma árvore de componentes. Podemos quebrar nossa aplicação em multiplos componentes sempre visando o reuso a organização. E dentro dessa árvore de componentes é muito comum que tenhamos uma comunição direta e indireta.
+
+Para exemplificarmos melhor dentro da pasta componentes vamos criar uma pasta chamada comunicacao e dentro dela vamos criar os componentes DiretaPai e DiretaFilho.
+
+- No componente DiretaFilho queremos receber um texto dentro de props(porps.texto), um número(props.numero) e um valor booleano(props.bool). Resumindo, vamos esperar receber esses três valores a partir do componente pai:
+
+``` JavaScript
+import React from "react";
+
+export default function DiretaFilho(props) {
+  return (
+    <div>
+      <div>{props.texto}</div>
+      <div>{props.numero}</div>
+      <div>{props.bool}</div>
+    </div>
+  );
+}
+```
+
+- Como funciona a comunicação de um componente pai, para um componente filho?
+É passarmos **via props(propriedades)** aquilo que queremos passar do pai para o filho. Ate porquê há uma relação direta, pois dentro do pai normalmente temos uma referência para o componente filho(import do componente filho, de tal forma que conseguimos passar as props para o filho):
+
+``` JavaScript
+import React from "react";
+import DiretaFilho from "./DirectChild";
+
+export default function DiretaFilho(props) {
+  return (
+    <div>
+      <DiretaFilho text="Filho 1" numero={20} bool={true}/>
+    </div>
+  );
+}
+```
+
+- De tal forma que podemos voltar no DiretaFilho e tratar esse valor booleano(bool) com operadores ternários. Se for true renderiza "verdadeiro" senão renderiza "falso":
+
+``` JavaScript
+import React from "react";
+
+export default function DiretaFilho(props) {
+  return (
+    <div>
+      <div>Texto: {props.texto}</div>
+      <div>Número: {props.numero}</div>
+      <div>Booleano: {props.bool ? "Verdadeiro" : "Falso"}</div>
+    </div>
+  );
+}
+```
+
+- Dessa forma, podemos inserir esse componente no arquivo de renderização principal(App.jsx):
+
+``` JavaScript
+// [...]
+import DiretaPai from "./components/communication/DirectFather"
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#09 - Comunicação Direta" color="#C2A886">
+        <DiretaPai/>
+      </Card>
+
+    </div>
+```
+Resumindo:
+Isso é uma comunicação direta, temos uma referência para um componente filho, e conseguimos no momento que criamos a instância do componente, passar as propriedades do pai para o filho.
+A questão da **comunicação direta**... comunicação sugere troca de dados, e a troca de dados do componente pai para o componente filho é passarmos **via propriedades(props)** o que queremos passar do pai para o filho.
+
+## Comunicação Indireta
+
+Quando precisamos passar informações do componente filho para o componente pai.
+O componente filho não tem uma referência direta com o componente pai, então não temo como via propriedades(porps) intânciar um componente pai(senão o pai passaria a ser filho e o filho passaria a ser pai).
+
+Para exemplificarmos melhor dentro da comunicacao vamos criar os componentes IndiretaPai e IndiretaFilho.
+
+- Vamos inserir dentro dos Componetes a extrutura básica de um Componente funcional. Lembrando que o componente IndiretaPai leva a referência do componente filho:
+
+``` JavaScript
+import React from "react";
+import IndiretaFilho from "./IndirectChild";
+
+export default function IndiretaPai(props) {
+  return (
+    <div>
+      Pai
+      <IndiretaFilho/>
+    </div>
+  );
+}
+```
+
+``` JavaScript
+import React from "react";
+
+export default function IndiretaFilho(props) {
+  return (
+    <div>
+      Filho
+    </div>
+  );
+}
+```
+
+- E vamos importar esse componente no nosso arquivo principal(App.js):
+
+``` JavaScript
+// [...]
+import IndiretaPai from "./components/communication/IndirectFather";
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#10 - Comunicação Indireta" color="#4F4537">
+        <IndiretaPai/>
+      </Card>
+
+    </div>
+```
+
+- Vamos supor que no componente filho temos um botão, e quando clicarmos nele as informações vão ser enviadas para o componente pai:
+
+``` JavaScript
+import React from "react";
+
+export default function IndiretaFilho(props) {
+  return (
+    <div>
+      <div>Filho</div>
+      <button>Fornecer Informações</button>
+    </div>
+  );
+}
+```
+
+Mas de fato como é feito a comunicação do sentido do filho enviar dados para o pai, já que o filho não tem nenhum tipo de comunicação direta com o pai, diferente do pai que tem o componente filho(dentro dele).
+Fazemos isso com uma **função via props**, ou seja, **passamos uma função do pai para o filho e quando o filho chamar essa função**(acontece um evento), **temos como passar informações para o pai**.
+
+- Vamos criar uma função com o nome fornecerInformacoes e ela vai receber 3 atributos(texto, numero e um booleano) e vai mostrar no console esses atributos:
+
+``` JavaScript
+import React from "react";
+import IndiretaFilho from "./IndirectChild";
+
+export default function IndiretaPai(props) {
+  function fornecerInformacoes(texto, numero, bool) {
+    console.log(texto, numero, bool)
+  }
+
+  return (
+    <div>
+      <div>Pai</div>
+      <IndiretaFilho/>
+    </div>
+  );
+}
+```
+
+- Como vamos conseguir passar essa função para o filho?
+Via props. Vamos ter a propriedade _quandoClicar_ vai ser chamada a função _fornecerInformações_: 
+
+``` JavaScript
+import React from "react";
+import IndiretaFilho from "./IndirectChild";
+
+export default function IndiretaPai(props) {
+  function fornecerInformacoes(texto, numero, bool) {
+    console.log(texto, numero, bool)
+  }
+
+  return (
+    <div>
+      <div>Pai</div>
+      <IndiretaFilho quandoClicar={fornecerInformacoes}/>
+    </div>
+  );
+}
+```
+
+- O que significa que dentro do filho vamos ter dentro de props esse atributo _quandoClicar_ e podemos chamá-la através de _props.quandoClicar_. NO botão vamos rastrear o evento de click com o método _onClick_ e dentro vamos receber uma função anônima que recebe um evento(e) e dentro dessa função anônima vamos chamar a **função quandoClicar via props** e passar como parâmetro dessa função os dados para o componente pai:
+
+``` JavaScript
+import React from "react";
+
+export default function IndiretaFilho(props) {
+  return (
+    <div>
+      <div>Filho</div>
+      <button>Fornecer Informações</button>
+    </div>
+  );
+}
+```
+
+Podemos passar essas informações a partir do método que foi passado como propriedade do pai para o filho, invocamos o método e conseguimos passar as informações para o pai. Essa é a comunicação indireta, o pai passa para o filho uma função callback(será chamada de volta em algum momento) e na chamada da função  podemos retornar as propriedades para o pai.
+
+## Componente com Estado
+
+A partir do React 16.8 é possível ter estado em componentes funcionais.
+
+- Temos aqui o caso anterior que o componente pai passou uma função via props para o componente filho, e o componente filho a partir de um evento(nesse caso foi o cick do botão) chama a função e passou informações para o componente pai. E agora, como conseguimos mudar esses valores no componente pai, ou seja, não basta criarmos variáveis e mandarmos  esses valores que foram passadas para o componente pai, como no exemplo abaixo, temos que manter estado:
+
+``` JavaScript
+import React from "react";
+import IndiretaFilho from "./IndirectChild";
+
+export default function IndiretaPai(props) {
+  let nome = '?';
+  let idade = 0;
+  let nerd = false;
+
+  function fornecerInformacoes(texto, numero, bool) {
+    nome = texto;
+    idade = numero;
+    nerd = bool;
+    
+    console.log(texto, numero, bool)
+  }
+
+  return (
+    <div>
+      <div>
+        <div>Nome: {nome}</div>
+        <div>Idade: {idade}</div>
+        <div>Nerd: {nerd ? "Verdadeiro" : "Falso"}</div>
+      </div>
+
+      <IndiretaFilho quandoClicar={fornecerInformacoes}/>
+    </div>
+  );
+}
+```
+
+- Para isso vamos importar o hook useState do React:
+
+``` JavaScript
+import React, { useState } from "react";
+```
+
+- A partir do useState conseguimos criar estado dentro do nosso componente. Então ao invés de criarmos uma variável simplesmente colocando o valor dela:
+
+``` JavaScript
+  let nome = '?';
+```
+
+- Vamos chamar o _useState_ e passar o valor inicial:
+
+``` JavaScript
+  let nome = useState('?');
+```
+
+- Só que essa função vai retornar um array com duas possições, a primeira possição vai ser o valor e a segunda posição vai ser uma função que vai ser usada para alterar esse valor.
+Como bem sabemos podemos usar atribuição via desestruturação (destructuring assignment). Ex.: const [a, b] = [1, 2], fica assim, a=1 e b=2. 
+Desse modo, vamos usar o destructuring para receber os dois valores do array que _useState_ retorna:
+
+``` JavaScript
+  let [nome, setNome] = useState('?'); //nome: é o próprio valor que inicializamos a variável; setNome: função que vamos utilizar para alterar o nome.
+```
+
+- E podemos aplicar a mesma atribuição para as demais variáveis:
+
+``` JavaScript
+import React, {useState} from "react";
+import IndiretaFilho from "./IndirectChild";
+
+export default function IndiretaPai(props) {
+  
+  let [nome, setNome] = useState('?');
+  let [idade, setIdade] = useState(0);
+  let [nerd, setNerd] = useState(false);
+
+  //[...]
+  );
+}
+```
+
+- E podemos alterar as variáveis que recebem os atributos da função _fornecerInformacoes_ para a função set das mesmas, e passar como parâmetro o valor:
+
+``` JavaScript
+import React, {useState} from "react";
+import IndiretaFilho from "./IndirectChild";
+
+export default function IndiretaPai(props) {
+
+  let [nome, setNome] = useState('?'); //nome: é o próprio valor que inicializamos a variável; setNome: função que vamos utilizar para alterar o nome.
+  let [idade, setIdade] = useState(0);
+  let [nerd, setNerd] = useState(false);
+
+  function fornecerInformacoes(texto, numero, bool) {
+    setNome(texto);
+    setIdade(numero);
+    setNerd(bool);
+    
+    console.log(texto, numero, bool)
+  }
+
+  return (
+    <div>
+      <div>
+        <div>Nome: {nome}</div>
+        <div>Idade: {idade}</div>
+        <div>Nerd: {nerd ? "Verdadeiro" : "Falso"}</div>
+      </div>
+
+      <IndiretaFilho quandoClicar={fornecerInformacoes}/>
+    </div>
+  );
+}
+```
+
+Nota-se que inicializamos os valores de nome, idade, nerd, pois não tinhamos as informações que foram passadas pelo componente filho. 
+A partir do evento inicialização da função _fornerInformacoes_(evento de click do botão) recebemos os valores de texto, numero e bool e passamos como respectivos parâmetros das funções set de cada variável de estado.

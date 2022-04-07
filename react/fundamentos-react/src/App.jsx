@@ -13,6 +13,8 @@ import ListaAlunos from "./components/repetition/ListStudents";
 import TabelaProdutos from "./components/repetition/TableProduts";
 import ParOuImpar from "./components/conditional/EvenOrOdd";
 import UsuarioInfo from "./components/conditional/UserInfo";
+import DiretaPai from "./components/communication/DirectFather"
+import IndiretaPai from "./components/communication/IndirectFather";
 
 export default function App(props) {
   return (
@@ -71,6 +73,14 @@ export default function App(props) {
           <UsuarioInfo usuario={{ email: 'fer@nando.com' }}/>
           <UsuarioInfo usuario={{}}/>
           <UsuarioInfo/>
+        </Card>
+
+        <Card titulo="#09 - Comunicação Direta" color="#C2A886">
+          <DiretaPai/>
+        </Card>
+
+        <Card titulo="#10 - Comunicação Indireta" color="#4F4537">
+          <IndiretaPai/>
         </Card>
       </div>
     </div>
