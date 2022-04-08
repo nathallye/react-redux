@@ -15,6 +15,8 @@ import ParOuImpar from "./components/conditional/EvenOrOdd";
 import UsuarioInfo from "./components/conditional/UserInfo";
 import DiretaPai from "./components/communication/DirectFather"
 import IndiretaPai from "./components/communication/IndirectFather";
+import Input from "./components/form/Input";
+import Contador from "./components/counter/Counter";
 
 export default function App(props) {
   return (
@@ -81,6 +83,14 @@ export default function App(props) {
 
         <Card titulo="#10 - Comunicação Indireta" color="#4F4537">
           <IndiretaPai/>
+        </Card>
+
+        <Card titulo="#11 - Componente Controlado" color="#FE3D56">
+          <Input/>
+        </Card>
+
+        <Card titulo="#12 - Componente de Classe - Contador" color="#670513">
+          <Contador numeroInicial={10}/>
         </Card>
       </div>
     </div>

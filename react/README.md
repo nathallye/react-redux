@@ -1196,3 +1196,913 @@ export default function IndiretaPai(props) {
 
 Nota-se que inicializamos os valores de nome, idade, nerd, pois não tinhamos as informações que foram passadas pelo componente filho. 
 A partir do evento inicialização da função _fornerInformacoes_(evento de click do botão) recebemos os valores de texto, numero e bool e passamos como respectivos parâmetros das funções set de cada variável de estado.
+
+## Componente Controlado
+
+Os elementos de formulário HTML funcionam de maneira um pouco diferente de outros elementos DOM no React, porque os elementos de formulário mantêm naturalmente algum estado interno. Por exemplo, este formulário em HTML puro aceita um único nome:
+
+``` HTML
+<form>
+  <label>
+    Nome:
+    <input type="text" name="name" />
+  </label>
+  <input type="submit" value="Enviar" />
+</form>
+```
+
+Esse formulário tem o comportamento padrão do HTML de navegar para uma nova página quando o usuário enviar o formulário. Se você quer esse comportamento no React, ele simplesmente funciona. Mas na maioria dos casos, é conveniente ter uma função JavaScript que manipula o envio de um formulário e tem acesso aos dados que o usuário digitou nos inputs. O modo padrão de fazer isso é com uma técnica chamada “componentes controlados” (controlled components).
+
+Para entendermos melhor como funciona um componente controlado, dentro da pasta componentes vamos criar uma pasta chamada formulario e dentro dela vamos criar um componente chamado Input.jsx.
+
+- Vamos inserir dentro do Componete a extrutura básica de um Componente funcional:
+
+``` JavaScript
+import React from "react";
+
+export default function Input(props) {
+  
+  return (
+    <div>
+      Input
+    </div>
+  );
+}
+```
+
+- Em seguida, vamos importar esse componente dentro do arquivo de renderização principal(App.jsx):
+
+``` JavaScript
+// [...]
+import Input from "./components/form/Input";
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#11 - Componente Controlado" color="#FE3D56">
+        <Input/>
+      </Card>
+    </div>
+```
+
+- No componente Input vamos definir uma variável com estato. Vamos importar o _useState_ do React e criar uma variável com o destructuring, sendo que a primeira posição vai receber o valor inicial e a segunda posição vai receber a função _set_ para alterar a variável:
+
+``` JavaScript
+import React, { useState } from "react";
+
+export default function Input(props) {
+  
+  const [valor, setValor] = useState('Inicial')
+
+  return (
+    <div>
+      Input
+    </div>
+  );
+}
+```
+
+- Vamos definir um elemento input com o _atributo value_ que recebe a variável _valor_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+export default function Input(props) {
+  
+  const [valor, setValor] = useState('Inicial')
+
+  return (
+    <div>
+      <input value={valor} />
+    </div>
+  );
+}
+```
+
+De tal forma que podemos notar no navegador o componente Input com o valor inicial. Mas como é um componente controlado não conseguimos alterar o valor do input. O que ele chava de verdade absoluta são os dados, ou seja, o estado do componente não mudou, não foi chamada em nenhum momento a função _setValor_ para mudar o dado. Resumindo, não conseguimos mudar o estado de um componente diretamente a partir da interface, primeiro temos que mudar o estado, para quando esse estado mudar aí sim conseguimos refletir essa mudança na interface gráfica.
+O caminho é unidirecional, o estado muda e altera a interface gráfica. A interface gráfica não altera o estado(isso acontece indiretamente a partir dos eventos).
+
+- Então, nesse caso, como conseguimos alterar o valor do input?
+Podemos mudar ele pegando o evento _onChange_, esse evento vai ser chamado toda vez que digitarmos:
+
+``` JavaScript
+import React, { useState } from "react";
+
+export default function Input(props) {
+  
+  const [valor, setValor] = useState('Inicial')
+
+  return (
+    <div>
+      <input value={valor} onChange={}/>
+    </div>
+  );
+}
+```
+
+- Podemos atribuir uma função a ele, e essa função vai receber como parâmetro o evento. Então, vamos criar uma função _quandoMudar_ e ela vai receber um evento "e"(sempre que dispararmos um evento associado ao input ele vai chamar o console.log):
+
+``` JavaScript
+import React, { useState } from "react";
+
+export default function Input(props) {
+  
+  const [valor, setValor] = useState('Inicial')
+
+  function quandoMudar(e) {
+    console.log(e);
+  }
+
+  return (
+    <div>
+      <input value={valor} onChange={quandoMudar}/>
+    </div>
+  );
+}
+```
+
+- Se quisermos acessar mais especificamente o _e.target.value_ vai mostrar o valor novo que foi gerado a partir do evento:
+
+``` JavaScript
+import React, { useState } from "react";
+
+export default function Input(props) {
+  
+  const [valor, setValor] = useState('Inicial')
+
+  function quandoMudar(e) {
+    console.log(e.target.value); //target = alvo; value = valor.
+  }
+
+  return (
+    <div>
+      <input value={valor} onChange={quandoMudar}/>
+    </div>
+  );
+}
+```
+
+- Ele mostra o que está sendo digitado mas ainda não altera o estado. Para alterar o estado dentro da função _quandoMudar_ vamos chamar a função _setValor_ e ela vai receber como valor o que estamos recebemos como resposta do evento(e.target.value):
+
+``` JavaScript
+import React, { useState } from "react";
+
+export default function Input(props) {
+  
+  const [valor, setValor] = useState('Inicial')
+
+  function quandoMudar(e) {
+    setValor(e.target.value);
+    // console.log(e.target.value); //target = alvo; value = valor.
+  }
+
+  return (
+    <div>
+      <input value={valor} onChange={quandoMudar}/>
+    </div>
+  );
+}
+```
+
+Aí sim o _setValor_ vai ser modificado e vai refletir no _valor_ e vai ser renderizado no input.
+
+- Podemos também ter componentes somente de leitura, desse modo, ele não vai precisar do _onChange_:
+
+``` JavaScript
+<input value={valor} readOnly />
+```
+
+## Componente baseado em Classe
+
+Classe, nada mais é que uma forma diferente de escreve função.
+
+Para entendermos melhor como funciona um componente controlado, dentro da pasta componentes vamos criar uma pasta chamada contador e dentro dela vamos criar um componente chamado Contador.jsx.
+
+- Vamos inserir dentro do Componete a extrutura básica de um Componente baseado em Classe. Vale ressaltar que a função render é obrigatória vai renderizar algo na tela:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- E vamos inserir esse componente dentro do nosso arquivo App.jsx:
+
+``` JavaScript
+// [...]
+import Contador from "./components/counter/Counter";
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#12 - Componente de Classe - Contador" color="#670513">
+        <Contador/>
+      </Card>
+    </div>
+```
+
+- E como definimos estado dentro de um componente baseado em classe?
+Podemos definir o _state_ como propriedade e essa propriedade pode ser definida como um objeto(no caso da função também podemos ter um objeto, usando o useState e atribuir um objeto dentro dele). Aqui no caso temos um único estado que é o _state_ acessando-o a partir da classe, e dentro dele vamos colocar todos os atributos necessários do nosso contador. 
+Inicialmente, o state vai ter um _numero_ e ele vai inicializar com _0_:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: 0
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Vamos passar para esse componente um valor inicial para o contador, então em App.jsx no componente Contador vamos passar um atributo _númeroINicial_:
+
+``` JavaScript
+// [...]
+import Contador from "./components/counter/Counter";
+
+  // [...]
+  
+    <div>
+      // [...]
+
+      <Card titulo="#12 - Componente de Classe - Contador" color="#670513">
+        <Contador numeroInicial={10}/>
+      </Card>
+    </div>
+```
+
+- E agora, como podemos pegar essa propriedade que foi passada para o nosso componente baseado em classe?
+Podemos acessar ele a partir de props, só que não diretamente props, vamos usar o _this.props_, ou seja, as propriedades que pertecem a instância dessa classe(this aponta para a instância/objeto atual):
+
+``` JavaScript
+<p>Valor Inicial: { this.props.numeroInicial }</p>
+```
+
+- Utilizando dessa lógica, vamos inicializar o _state_ com o valor passado via props:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Próximo passo, vamos criar uma função que vai incrementar o valor do contador. 
+O que vamos fazer dentro dessa função?
+Vamos alterar o valor de _numero_ ou seja, alterar _state_. Assim como, no _useState_ temos uma função que altera o estado, aqui dentro da classe também vamos ter uma função para alterar o estado, e o nome dela é _setState_. 
+Então, temos que chamar essa função _setState_ dentro da função incremento para conseguirmos alterar o valor.
+Dentro da função _setState_ vamos passar um novo objeto para _state_(já que ele é um objeto), e nesse objeto vamos passar o atributo que queremos alterar:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial
+  }
+
+  inc() {
+    this.setState({
+      numero: this.state.numero + 1 // vamos pegar o estado atual e acrescentar + 1 
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+        <p>{ this.state.numero }</p>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Vamos utilizar um botão e dentro dele o evento de onClick e quando ele for acionado vai chamar a função de incrementar. Para evitar um erro do _this_ não apontar para a instância correta, vamos utilizar na função de incremento uma arrow function:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial
+  }
+
+  inc = () => {
+    this.setState({
+      numero: this.state.numero + 1 // vamos pegar o estado atual e acrescentar + 1 
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+        {/* <p>Valor Inicial: { this.props.numeroInicial }</p> */}
+        <h3>{ this.state.numero }</h3>
+        <button onClick={this.inc}>+</button>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- E vamos seguir a mesma lógica para criar uma função de decremento:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial 
+  }
+
+  inc = () => {
+    this.setState({
+      numero: this.state.numero + 1 // vamos pegar o estado atual e acrescentar + 1 
+    });
+  }
+
+  dec = () => {
+    this.setState({
+      numero: this.state.numero - 1 // vamos pegar o estado atual e subtrair - 1 
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+        <h3>{ this.state.numero }</h3>
+        <button onClick={this.inc}>+</button>
+        <button onClick={this.dec}>-</button>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Outra implementação importante a ser feita no nosso contato é a quantidade que queremos incrementar ou decrementar(além de somente 1), que nada mais que o passo.
+Como podemos fazer isso?
+Criando uma nova propriedade dentro de _state_ chamada passo:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, // se o numero inicial não for fornecido vai ser 0
+    passo: this.props.passoInicial || 5 // se o passo inicial não for fornecido vai igual a 5
+  }
+
+  inc = () => {
+    this.setState({
+      numero: this.state.numero + 1 // vamos pegar o estado atual e acrescentar + 1
+    });
+  }
+
+  dec = () => {
+    this.setState({
+      numero: this.state.numero - 1 // vamos pegar o estado atual e subtrair - 1 
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+        {/* <p>Valor Inicial: { this.props.numeroInicial }</p> */}
+        <h3>{ this.state.numero }</h3>
+        <button onClick={this.inc}>+</button>
+        <button onClick={this.dec}>-</button>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- E vamos usar esse atributo passo para incrementar e decrementar de acordo com o valor passado:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, 
+    passo: this.props.passoInicial || 5 
+  }
+
+  inc = () => {
+    this.setState({
+      numero: this.state.numero + this.state.passo 
+    });
+  }
+
+  dec = () => {
+    this.setState({
+      numero: this.state.numero - this.state.passo 
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+        <h3>{ this.state.numero }</h3>
+        <button onClick={this.dec}>-</button>
+        <button onClick={this.inc}>+</button>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Vamos criar também uma outra parte do template para definirmos um input e apartir desse input vai ser feita a alteração do passo:
+
+``` JavaScript
+import React, { Component } from "react";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, 
+    passo: this.props.passoInicial || 5 
+  }
+
+  inc = () => {
+    this.setState({
+      numero: this.state.numero + this.state.passo 
+    });
+  }
+
+  dec = () => {
+    this.setState({
+      numero: this.state.numero - this.state.passo 
+    });
+  }
+
+  setPasso = (e) => { 
+    this.setState({
+      passo: +e.target.value 
+    })
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+        <h3>{ this.state.numero }</h3>
+        <div>
+          <label htmlFor="passoInput">Passo: </label>
+          <input 
+            type="number" 
+            value={this.state.passo} 
+            id="passoInput"
+            onChange={this.setPasso} 
+          />
+        </div>
+        <button onClick={this.dec}>-</button>
+        <button onClick={this.inc}>+</button>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+Agora vamos dicidir esse nosso componente em 3, para deixar o código mais organizado. Primeiro componente vai ser o Display(a parte que mostra a contagem do valor), o segundo vai ser o formulário do passo e o terceiro vai ser os botões.
+Mas vamos continuar mantendo o estado do componente dentro de Contador(componente pai).
+
+- Vamos iniciar criando o componente Display.jsx e ele será um componente funcional:
+
+``` JavaSCript
+import React from "react";
+
+export default function Display(props) {
+  return (
+    <div>
+      
+    </div>
+  );
+}
+```
+
+- E vamos seguir essa mesma extrutura para criar os componentes PassoFomulário e Botoes.
+
+- Dentro do contador o display representa apenas o trecho de código que está dentro do h3, que nada mais é que a variável de estado(state) e como essa variável recebe um objeto com seus atributos, vamos acessar o numero dela:
+
+``` JavaScript
+<h3>{ this.state.numero }</h3>
+```
+
+- Vamos remover esse trecho de código de Contador e colocar no componente Display. 
+Mas como _não estamos mais trabalhando com função baseada em classe_, vamos receber essa propriedade _numero_ através de _props_:
+
+``` JavaScript
+import React from "react";
+
+export default function Display(props) {
+  return (
+    
+    <h3>{ props.numeroDisplay }</h3>
+  
+  );
+}
+```
+
+- E vamos importar o componente Display dentro do seu componente pai Contador. E vamos inserir no local do display o componente Display e passar o número para o componente filho:
+
+``` JavaScript
+// [...]
+import Display from "./Display";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, 
+    passo: this.props.passoInicial || 5 
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <div className="Contador">
+        <h2>Contador</h2>
+        <Display numeroDisplay={this.state.numero}/> {/*O componente pai passa via this.state o numero por ser um componente baseado em classe, e o componente filho recebe via props*/}
+        
+        // [...]
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Antes de fazer a parte do PassoForm que é mais complexa, vamos migrar os botões do componente Contador para o componente filho Botoes:
+
+``` JavaScript
+import React from "react";
+
+export default function Botoes(props) {
+  return (
+    <div>
+      <button onClick={props.decrementar}>-</button>
+      <button onClick={props.incrementar}>+</button>
+    </div>  
+  );
+}
+```
+
+- Agora, no Contador vamos importar o seu filho Botoes e inserir a referência desse componente onde os botoes ficavam:
+
+``` JavaScript
+// [...]
+import Botoes from "./Buttons";
+
+class Contador extends Component {
+  
+  // [...]
+
+  inc = () => {
+    this.setState({
+      numero: this.state.numero + this.state.passo 
+    });
+  }
+
+  dec = () => {
+    this.setState({
+      numero: this.state.numero - this.state.passo 
+    });
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <div className="Contador">
+        // [...]
+        
+        <div>
+          <label htmlFor="passoInput">Passo: </label>
+          <input 
+            type="number" 
+            value={this.state.passo} 
+            id="passoInput"
+            onChange={this.setPasso} 
+          />
+        </div>
+        
+        <Botoes />
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Só que não passamos nada como parâmetro, então quando clicarmos não vai acontecer nada. Então, vamos passar como prarâmetro as funções inc e dec:
+
+``` JavaScript
+// [...]
+import Botoes from "./Buttons";
+
+class Contador extends Component {
+  
+  // [...]
+
+  inc = () => {
+    this.setState({
+      numero: this.state.numero + this.state.passo 
+    });
+  }
+
+  dec = () => {
+    this.setState({
+      numero: this.state.numero - this.state.passo 
+    });
+  }
+
+  // [...]
+
+  render() {
+    return (
+      <div className="Contador">
+        // [...]
+        
+        <div>
+          <label htmlFor="passoInput">Passo: </label>
+          <input 
+            type="number" 
+            value={this.state.passo} 
+            id="passoInput"
+            onChange={this.setPasso} 
+          />
+        </div>
+        
+        <Botoes decrementar={this.dec} incrementar={this.inc}/>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Dessa forma o componente filho Botoes já consegue receber via props essas funções, acessando as propriedades incrementar e decrementar.
+
+- Agora, vamos fazer a parte do componente PassoForm. Esse vai ser um pouco mais complicado, pois nele precisamos tanto passar informação quando receber(notificando o componente do que acabou de acontecer no passo).
+Primeiro, vamos pegar a trecho de código do formulário e migrar do Contador para o PassoForm:
+
+``` JavaScript
+import React from "react";
+
+export default function PassoForm(props) {
+  return (
+    <div>
+      <label htmlFor="passoInput">Passo: </label>
+      <input 
+        type="number" 
+        value={props.passoForm} 
+        id="passoInput"
+        onChange={props.setPassoForm} 
+      />
+    </div>
+  );
+}
+```
+
+- E vamos importar o PassoForm dentro do Contador e criar a referência onde ficava o formulário:
+
+``` JavaScript
+// [...]
+import PassoForm from "./StepForm";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, 
+    passo: this.props.passoInicial || 5 
+  }
+
+  // [...]
+
+  setPasso = (e) => { 
+    this.setState({
+      passo: +e.target.value 
+    })
+  }
+
+  render() {
+    return (
+      <div className="Contador">
+        <h2>Contador</h2>
+        <Display numeroDisplay={this.state.numero}/> 
+        
+        <PassoForm/>
+        
+        <Botoes decrementar={this.dec} incrementar={this.inc}/>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Agora, vamos passar como parâmetro para o PassoForm o que queremos como passo inicial:
+
+``` JavaScript
+// [...]
+import PassoForm from "./StepForm";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, 
+    passo: this.props.passoInicial || 5 
+  }
+
+  // [...]
+
+  setPasso = (e) => { 
+    this.setState({
+      passo: +e.target.value 
+    })
+  }
+
+  render() {
+    return (
+      <div className="Contador">
+        <h2>Contador</h2>
+        <Display numeroDisplay={this.state.numero}/> 
+        
+        <PassoForm passoForm={this.state.passo}/> {/* aqui temos uma comunicação direta: estamos passando via props os dados de um componente pai para o filho */}
+        
+        <Botoes decrementar={this.dec} incrementar={this.inc}/>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Agora, vamos precisar de uma comunicação indireta, onde o componente filho PassoForm vai passar para o componente pai Contador o dado que precisa ser alterado.
+Nesse caso, já não vamos mais receber o evento dentro de _setPasso_, vamos receber o _novoPasso_ para deixarmos encapsulado esse evento dentro do componete _PassoForm_, e passarmos o número corredo do passo para alterar a variável de estado _passo_:
+
+``` JavaScript
+// [...]
+import PassoForm from "./StepForm";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, 
+    passo: this.props.passoInicial || 5 
+  }
+
+  // [...]
+
+  setPasso = (novoPasso) => { 
+    this.setState({
+      passo: novoPasso 
+    })
+  }
+
+  render() {
+    return (
+      <div className="Contador">
+        <h2>Contador</h2>
+        <Display numeroDisplay={this.state.numero}/> 
+        
+        <PassoForm passoForm={this.state.passo}/>
+        
+        <Botoes decrementar={this.dec} incrementar={this.inc}/>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Esse elemento já vai esperar que a propriedade _setPassoForm_ do componente _PassoForm_ receba via props a função setPasso:
+
+``` JavaScript
+// [...]
+import PassoForm from "./StepForm";
+
+class Contador extends Component {
+  
+  state = {
+    numero: this.props.numeroInicial || 0, 
+    passo: this.props.passoInicial || 5 
+  }
+
+  // [...]
+
+  setPasso = (novoPasso) => { 
+    this.setState({
+      passo: novoPasso 
+    })
+  }
+
+  render() {
+    return (
+      <div className="Contador">
+        <h2>Contador</h2>
+        <Display numeroDisplay={this.state.numero}/> 
+        
+        <PassoForm passoForm={this.state.passo} setPassoForm={this.setPasso}/>
+        
+        <Botoes decrementar={this.dec} incrementar={this.inc}/>
+      </div>
+    );
+  }
+}
+
+export default Contador;
+```
+
+- Então agora no PassoForm o evento onChange vai esperar _props.setPasso_, mas não podemos chamar direto, senão vai ser passado um evento, mas não queremos isso, já queremos passar o novo número, então vamos receber o evento e dentro dele vamos chamar _props.setPasso_ passando o _evento.target.value_:
+
+``` JavaScript
+import React from "react";
+
+export default function PassoForm(props) {
+  return (
+    <div>
+      <label htmlFor="passoInput">Passo: </label>
+      <input 
+        type="number" 
+        value={props.passoForm} 
+        id="passoInput"
+        onChange={e => props.setPassoForm(+e.target.value)} // "+" na frente para converter para int
+      />
+    </div>
+  );
+}
+```
+
+- Podemos notar que na comunicação indireta, temos o componente pai enviando via props uma função para o componente filho, de tal forma que quando o evento acontece _(onChange={e => props.setPassoForm(+e.target.value)})_ o componente filho, manda de volta a informação do novoPasso que precisa ser alterado no estado (que é exatamente o que se encontra dentro de _e.target.value_[o atributo novoPasso que é recebido na função setPasso]).
+
