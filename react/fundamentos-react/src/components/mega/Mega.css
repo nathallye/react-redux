@@ -1,0 +1,16 @@
+.MegaSena input {
+  font-size: 1.4rem;
+
+  width: 40px;
+}
+
+.MegaSena button {
+  font-size: 1.4rem;
+
+  margin: 10px;
+  height: 30px;
+  width: 200px;
+
+  background-color: rosybrown;
+  color: #fff;
+}
