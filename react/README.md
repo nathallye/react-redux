@@ -15,6 +15,19 @@ npx create-react-app fundamentos-react
 
 **create-react-app:** Dependência para criar um projeto.
 
+- Ou, podemos rodar o comando, para instalar o comando create-reatc-app globalmente na nossa máquina:
+
+```
+sudo npm install -g create-react-app
+```
+
+- E em seguida podemos usá-lo:
+
+```
+create-react-app fundamentos-react
+                 [nome-aplicação]
+```
+
 - Ao finalizar a criação ele informa no terminal os próximos passos.
 Primeiro, entrar na pasta da aplicação:
 

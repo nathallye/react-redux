@@ -1,0 +1,12 @@
+/* A importação da fonte e o justify content vai ser feito no arquivo index.css */
+
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+
+  overflow: hidden; /*overflow: propriedade especifica se o conteúdo deve ser recortado ou adicionado barras de rolagem quando o conteúdo de um elemento for muito grande para caber na área especificada; hidden- O estouro é cortado e o restante do conteúdo ficará invisível*/
+
+  background-color: red; /*temporário*/
+}
+
