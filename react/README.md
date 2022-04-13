@@ -2,7 +2,7 @@
 
 React é um framework single page application(aplicação de única página).
 
-## Craindo o primeiro projeto React
+## Criando o primeiro projeto React
 
 - Dentro da pasta do projeto, vamos rodar o comando:
 
@@ -2119,3 +2119,945 @@ export default function PassoForm(props) {
 
 - Podemos notar que na comunicação indireta, temos o componente pai enviando via props uma função para o componente filho, de tal forma que quando o evento acontece _(onChange={e => props.setPassoForm(+e.target.value)})_ o componente filho, manda de volta a informação do novoPasso que precisa ser alterado no estado (que é exatamente o que se encontra dentro de _e.target.value_[o atributo novoPasso que é recebido na função setPasso]).
 
+
+## Projeto calculadora
+
+### Criando o projeto
+
+```
+create-react-app calculadora
+                 [nome-aplicação]
+```
+
+- Ao finalizar a criação ele informa no terminal os próximos passos.
+Primeiro, entrar na pasta da aplicação:
+
+```
+cd calculadora
+   [nome-pasta-aplicação]
+```
+
+- Segundo, rodar o comando para iniciar o projeto:
+
+```
+npm start
+```
+
+### Criando o Componente Calculator
+
+A priori, vamos uma pasta dentro de src chamada **main** e dentro dela vamos criar o arquivo Calculator.jsx e seu arquivo css.
+
+- Esse componente Calculator vai ser baseado em classes. Vamos criar a extrutura base desse componente, importar o seu arquivo css e criar uma classe para esse elemento:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+
+export default class Calculator extends Component {
+  render() {
+    return (
+      <div className="calculator">
+        
+      </div>
+    )
+  }
+}
+```
+
+- No arquivo css vamos chamar essa classe que criamos chamada calculator, e vamos inserir a altura, largura e uma borda para essa calculadora tendo como base a calculadora de um macbook:
+
+``` CSS
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+}
+```
+
+- Vamos tratar os estouros do conteúdo com a propriedade overflow:
+
+``` CSS
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+
+  overflow: hidden; /*overflow: propriedade especifica se o conteúdo deve ser recortado ou adicionado barras de rolagem quando o conteúdo de um elemento for muito grande para caber na área especificada; hidden- O estouro é cortado e o restante do conteúdo ficará invisível*/
+}
+```
+
+- E para visualizar o espaço ocupado em tela pela calculadora, vamos inserir um backgroud temporário:
+
+``` CSS
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+
+  overflow: hidden; /*overflow: propriedade especifica se o conteúdo deve ser recortado ou adicionado barras de rolagem quando o conteúdo de um elemento for muito grande para caber na área especificada; hidden- O estouro é cortado e o restante do conteúdo ficará invisível*/
+
+  background-color: red; /*temporário*/
+}
+```
+
+- Agora, vamos abrir o arquivo _index.js_ do projeto calculadora, e dentro dele vamos remover o componente App que não vamos usá-lo nesse projeto e vamos importar o componente Calculator e referência-lo:
+
+``` JavaScript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+// import App from './App';
+import Calculator from './main/Calculator';
+import reportWebVitals from './reportWebVitals';
+
+
+ReactDOM.render(
+  <React.StrictMode>
+    <Calculator />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+reportWebVitals();
+```
+
+- E salvando o arquivo já podemos visualizar nosso componente sendo renderizado em tela, mas ele não está centralizado.
+
+- Para resolver a posição do componente Calculator em tela, vamos fazer umas alterações no arquivo _index.css_(ele já está importado dentro do arquivo index.js):
+
+``` CSS
+body {
+  display: flex;
+  justify-content: center; /*para centralizar no eixo horizontal*/
+  align-items: center; /*para centralizar no eixo vertical*/
+
+  height: 100vh; /*vai ocupar a altura inteira da tela*/
+}
+```
+
+- E quando inserirmos texto, também queremos que eles fiquem centralizados, portanto vamos utilizar a propriedade text-aling:
+
+``` CSS
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+
+  text-align: center;
+  color: #fff; /*alterar a cor da fonte*/
+}
+```
+
+- E também, vamos aplicar um gradiente no fundo da tela:
+
+``` CSS
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+
+  text-align: center;
+  color: #fff;
+  
+  background: linear-gradient(to right, rgb(170, 75, 107), rgb(107, 107, 131), rgb(59, 141, 153));
+}
+```
+
+- Para a fonte ficar mais parecida com a calculadora modelo, vamos importar a fonte Roboto e aplicar ela em todos os elementos:
+
+``` CSS
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap');
+
+* {
+  font-family: 'Roboto Mono', monospace;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100vh;
+
+  text-align: center;
+  color: #fff;
+  
+  background: linear-gradient(to right, rgb(170, 75, 107), rgb(107, 107, 131), rgb(59, 141, 153));
+}
+```
+
+- E por fim, vamos voltar no arquivo _index.js_ e adicionar um título(h1) para a nossa calculadora. Lembrando que se não envolvermos os elementos adjacente com uma div ou com o React.Fragment, vai ocorrer um erro.
+
+``` JavaScript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+// import App from './App';
+import Calculator from './main/Calculator';
+import reportWebVitals from './reportWebVitals';
+
+
+ReactDOM.render(
+  <React.StrictMode>
+    <div>
+      <h1>Calculadora</h1>
+      <Calculator />
+    </div>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+reportWebVitals();
+```
+
+### Criando o Componente Button
+
+A priori, vamos uma pasta dentro de src chamada **components** e dentro dela vamos criar o arquivo Button.jsx e seu arquivo css.
+
+- Esse componente Button vai ser baseado em funções. Vamos criar a extrutura base desse componente, importar o seu arquivo css e criar uma classe para esse elemento:
+
+``` JavaScript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    <button className="button">
+      0 {/*A priori vamos colocar um número qualquer no botão para apenas visualizarmos em tela*/}
+    </button>
+  )
+}
+```
+
+- Agora dentro do componente principal Calculator vamos importar o componente Button e referência-lo:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+
+export default class Calculator extends Component {
+  render() {
+    return (
+      <div className="calculator">
+        <Button />
+        <Button />
+        <Button />
+        <Button />
+        <Button />
+      </div>
+    )
+  }
+}
+```
+
+- Tendo referênciado alguns botões, vamos aplicar o estilo para ficar o mais próximo possível do nosso modelo. A priori, dentro da pseudo classe _:root_ vamos criar umas variáveis de CSS para simplificar nosso código:
+
+``` CSS
+:root { /*para criar variáveis css*/
+  --background-button: #f0f0f0;
+  --border-button: solid 1px #888;
+}
+```
+
+- E vamos utilizar essas variáveis a partir da função _var_ nas bordas e no background dos botões:
+
+``` CSS
+.button {
+  border: none; /*para remover bordas existentes*/
+  border-right: var(--border-button);
+  border-bottom: var(--border-button);
+
+  background-color: var(--background-button);
+}
+```
+
+- Além disso, vamos alterar o tamanho da fonte e remover o outline azul que aparece quando passamos o cursor sobre o botão:
+
+``` CSS
+.button {
+  font-size: 1.4rem;
+
+  border: none;
+  border-right: var(--border-button);
+  border-bottom: var(--border-button);
+
+  background-color: var(--background-button);
+
+  outline: none; /*para remover o outline azul quando passamos o cursor sobre o button*/
+}
+```
+
+- Voltando no componente Button, vamos receber uma propriedade label, para receber o elemento/label do botão:
+
+``` JavaScript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    <button className="button">
+      {props.label}
+    </button>
+  )
+}
+```
+
+- E no componente Calculator vamos passar o label via props:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+
+export default class Calculator extends Component {
+  render() {
+    return (
+      <div className="calculator">
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- Agora, vamos usar o CSS grid para organizar os botões. Dentro de _Calculator.css_, primeiro vamos remover o background red. Em seguida, vamos ativar o _display: grid_, para tornar o elemento um grid container(por padrão organiza os elementos dentro em coluna):
+
+``` CSS
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+
+  overflow: hidden; /*overflow: propriedade especifica se o conteúdo deve ser recortado ou adicionado barras de rolagem quando o conteúdo de um elemento for muito grande para caber na área especificada; hidden- O estouro é cortado e o restante do conteúdo ficará invisível*/
+ 
+  display: grid; /*coloca os elementos um embaixo do outro usando o mesmo tamanho para todos os elementos*/
+}
+```
+
+- Podemos usar a propriedade _grid-template-columns_ para determinar o número de colunas da nossa calculadora e organizá-la:
+
+``` CSS
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+
+  overflow: hidden;
+ 
+  display: grid; 
+  grid-template-columns: repeat(4, 25%); /*vamos ter 4 colunas, cada uma ocupando 25%; repeat age como um multiplicador, ou seja, ele aplica 4 vezes 25% nas colunas*/
+}
+```
+
+- No inicio da calculadora temos o display e em seguida, abaixo, cada uma das 5 linhas vão ocupar um tamanho fixo. Vamos usar a propriedade _grid-template-rows_ para definir o tamanho dessas linhas:
+
+``` CSS
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+
+  overflow: hidden; 
+ 
+  display: grid; 
+  grid-template-columns: repeat(4, 25%); 
+  grid-template-rows: 48px 48px 48px 48px 48px; /*48px para cada uma das 5 linhas dessa grid*/
+}
+```
+
+### Criando o Componente Display
+
+A priori, dentro da pasta **components** vamos criar o arquivo Display.jsx e seu arquivo css.
+
+- Esse componente Display vai ser baseado em funções. Vamos criar a extrutura base desse componente, importar o seu arquivo css e criar uma classe para esse elemento:
+
+``` JavaScript
+import React from "react";
+import "./Display.css"
+
+export default function Display(props) {
+  return (
+    <div className="display">
+      
+    </div>
+  )
+}
+```
+
+- Esse componente Display vai receber uma propriedade que vai ser o valor exibido:
+
+``` JavaScript
+import React from "react";
+import "./Display.css"
+
+export default function Display(props) {
+  return (
+    <div className="display">
+      {props.value}
+    </div>
+  )
+}
+```
+
+- Agora dentro do componente principal Calculator vamos importar o componente Button e referência-lo:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+import Display from "../componets/Display";
+
+export default class Calculator extends Component {
+  render() {
+    return (
+      <div className="calculator">
+        <Display />
+
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- A priori, vamos inserir um valor meramente ilustrativo para visualizarmos em tela:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+import Display from "../componets/Display";
+
+export default class Calculator extends Component {
+  render() {
+    return (
+      <div className="calculator">
+        <Display value={100}/>
+
+
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- Agora indo no arquivo _Calculator.css_ antes das 5 linhas fixas dos botões vamos inserir uma linha que vai representar o display:
+
+``` CSS
+.calculator {
+  height: 320px;
+  width: 235px;
+  border-radius: 5px;
+
+  overflow: hidden; 
+ 
+  display: grid; 
+  grid-template-columns: repeat(4, 25%);
+  grid-template-rows: 1fr 48px 48px 48px 48px 48px; /*a primeira linha vai ser 1fr(um fragmento) que vai pegar o restante do tamanho disponivel em tela e 48px para cada uma das 5 linhas restante dessa grid*/
+}
+```
+
+- Vamos melhorar o display indo no arquivo _Display.css_. Primeiramente, vamos usar a propriedade _grid-column_ para dá um span, para informar quantas colunas da grid o display vai ocupar, nesse caso, vão ser 4:
+
+``` CSS
+.display {
+  grid-column: span 4; /*span 4: o span para informa quantas colunas da grid esse elemento vai ocupar, nesse caso vai ser 4*/
+}
+```
+
+- Vamos definir uma cor de fundo(cor preto com uma transparência):
+
+``` CSS
+.display {
+  grid-column: span 4;
+
+  background-color: #0004;
+}
+```
+
+- Embora o Display seja um elemento da grid, podemos aplicar o flexbox nele(apenas os elementos dentro do display vão receber essa propriedade):
+
+``` CSS
+.display {
+  grid-column: span 4; 
+
+  display: flex;
+
+  background-color: #0004;
+}
+```
+
+- Podemos aplicar o _justify-content_ para o elemento ficar a direita e centralizar o conteúdo com o _align-items_:
+
+``` CSS
+.display {
+  grid-column: span 4; 
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  background-color: #0004;
+}
+```
+
+- E adicionar um espaçamento para tirar o elemento mais da borda:
+
+``` CSS
+.display {
+  grid-column: span 4; 
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+
+  background-color: #0004;
+}
+```
+
+- Por fim, vamos ajustar o tamanho da fonte, para que o valor do display fique maior em relação aos botões:
+
+``` CSS
+.display {
+  font-size: 2.1rem; /*REM - é calculado em cima do valor da TAG Body, Html ou Navegador; EM - já utiliza no cálculo o valor do elemento pai, criando uma hierarquia no cálculo, tornando mais complexo o uso.*/
+
+  grid-column: span 4; 
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px;
+
+  background-color: #0004;
+}
+```
+
+### Retonando no Componente Button - Retoques
+
+- Primeiramente, no arquivo _Button.css_ vamos adicionar a pseudo classe active para quando clicarmos no botão ele mudar de cor:
+
+``` CSS
+:root { /*para criar variáveis css*/
+  --background-button: #f0f0f0;
+  --border-button: solid 1px #888;
+}
+
+.button {
+  font-size: 1.4rem;
+
+  border: none;
+  border-right: var(--border-button);
+  border-bottom: var(--border-button);
+
+  background-color: var(--background-button);
+
+  outline: none;
+}
+
+.button:active { /*para o botão ficar mais escuro ao clicar*/
+  background-color: #ccc;
+}
+```
+
+- Agora, vamos criar classes para adicionarmos depois nos elementos button de acordo com o número de colunas que devem ocupar:
+
+``` CSS
+:root { /*para criar variáveis css*/
+  --background-button: #f0f0f0;
+  --border-button: solid 1px #888;
+}
+
+.button {
+  font-size: 1.4rem;
+
+  border: none;
+  border-right: var(--border-button);
+  border-bottom: var(--border-button);
+
+  background-color: var(--background-button);
+
+  outline: none;
+}
+
+.button:active { /*para o botão ficar mais escuro ao clicar*/
+  background-color: #ccc;
+}
+
+.button-double { /*vamos aplicar essa propriedade em botões que devem ocupar duas posições*/
+  grid-column: span 2;
+}
+
+.button-triple { /*vamos aplicar essa propriedade em botões que devem ocupar três posições*/
+  grid-column: span 3;
+}
+```
+
+- Também vamos criar uma classe para adicionarmos nos elementos button quando for um operador, pois esse botões tem a cor de fundo e do texto diferente dos demais:
+
+```CSS
+:root { /*para criar variáveis css*/
+  --background-button: #f0f0f0;
+  --border-button: solid 1px #888;
+}
+
+.button {
+  font-size: 1.4rem;
+
+  border: none;
+  border-right: var(--border-button);
+  border-bottom: var(--border-button);
+
+  background-color: var(--background-button);
+
+  outline: none;
+}
+
+.button:active { /*para o botão ficar mais escuro ao clicar*/
+  background-color: #ccc;
+}
+
+.button .double { /*vamos aplicar essa propriedade em botões que devem ocupar duas posições*/
+  grid-column: span 2;
+}
+
+.button .triple { /*vamos aplicar essa propriedade em botões que devem ocupar três posições*/
+  grid-column: span 3;
+}
+
+.button .operation { /*vamos aplicar essa propriedade em botões de operações*/
+  background-color: #fa8231;
+  color: #fff;
+}
+
+.button .operation:active {
+  background-color: #fa8231cc;
+}
+```
+
+- Agora vamos fazer com essas classes sejam aplicadas dentro dos botões de acordo com as propriedades forem passadas. No componente Button, no lugar da _className="button"_ vamos definir uma expressão e ela delimitada por batik, ou seja, temos uma template string:
+
+``` JavaScript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    <button className={` 
+      
+    `}>
+      {props.label}
+    </button>
+  )
+}
+```
+
+- Vamos colocar logo a classe _button_, sabemos que ela sempre vai ser aplicada, independente de qualquer outra propriedade enviada:
+
+``` JavaScript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    <button className={` 
+      button
+    `}>
+      {props.label}
+    </button>
+  )
+}
+```
+
+- Já _double_, _triple_, _operation_ vão precisar de porps para serem aplicadas ou não. Portanto, vamos adicionar um operador ternário, pois se a props double/triple/operation estiver definido "?" a classe double/triple/operation vai ser aplicada, senão ":" vai ficar vazio:
+
+``` JavaScript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    // dentro de uma tamplate string(javascript puro) temos que usar o "$" e chaves{} para interpolar uma variálvel
+    <button className={` 
+      button
+      ${props.double ? 'double' : ''} 
+      ${props.triple ? 'triple' : ''}
+      ${props.operation ? 'operation' : ''} 
+    `}> 
+      {props.label}
+    </button>
+  )
+}
+```
+
+- Antes de usarmos essas classes dentro do componente Calculator vai ter uma questão importante. No botão temos o evento do click, e quando clicarmos no botão quermos que o conteúdo/label do botão seja retornado, então para isso vamos adicionar o _onClick_ que vai disparar uma arrow function que recebe o evento, e vai chamar, _props.click()_, ou seja, esperamos receber via props do button uma propriedade chamada _click_ que vai _conter uma função dentro dela_:
+
+``` JavaSCript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    <button onClick={e => props.click()} className={` 
+      button
+      ${props.double ? 'double' : ''}
+      ${props.triple ? 'triple' : ''}
+      ${props.operation ? 'operation' : ''} 
+    `}>
+      {props.label}
+    </button>
+  )
+}
+```
+
+- Só que essa função ao invés de receber o evento, vai receber diretamente o _props.label_, ou seja, o _conteúdo do elemento_, e ele será passado para a função _click_:
+
+``` JavaSCript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    <button onClick={e => props.click(props.label)} className={` 
+      button
+      ${props.double ? 'double' : ''}
+      ${props.triple ? 'triple' : ''}
+      ${props.operation ? 'operation' : ''} 
+    `}>
+      {props.label}
+    </button>
+  )
+}
+```
+
+- Devemos ter cuidado para verificarmos se de fato essa propriedade está presente, portanto podemos colocar uma condicional, para primeiro verificarmos se a propriedade _click_ está presente e depois chamar a função _click()_:
+
+``` JavaSCript
+import React from "react";
+
+import "./Button.css";
+
+export default function Button(props) {
+  return (
+    <button onClick={e => props.click && props.click(props.label)} className={` 
+      button
+      ${props.double ? 'double' : ''}
+      ${props.triple ? 'triple' : ''}
+      ${props.operation ? 'operation' : ''} 
+    `}>
+      {props.label}
+    </button>
+  )
+}
+```
+
+- Agora, voltando no componente Calculator vamos criar 3 funções: uma vai ser chamada para zerar a calculadora(pelo botão AC), outra função vai ser responsável por adicionar um digito(quando clicarmos nos botões numerais e o ponto) e a última vai ser responsável por setar a operação.
+
+- Vamos criar efetivamente a função que vai ser responsável por zerar a calculadora, ela vai se chamar _clearMemory()_. A priori, só vamos inserir um console.log para verficarmos no console se a função está sendo chamada:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+import Display from "../componets/Display";
+
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  render() {
+    return (
+      <div className="calculator">
+        <Display value={100}/>
+
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- A segunda função, responsável por setar a operação vai se chamar _setOperation_ e vai receber como parâmetro a operação. E a priori, vamos colocar para ela apenas retornar no console a _operation_ recebida:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+import Display from "../componets/Display";
+
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation)
+  } 
+
+  render() {
+    return (
+      <div className="calculator">
+        <Display value={100}/>
+
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- Por fim, a próxima função vai ser responsável por adicionar um digito e ela vai se chamar _addDigit_ e vai receber como parâmetro um digito _n_. E a priori, vamos colocar para ela apenas retornar no console o digito recebido:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+import Display from "../componets/Display";
+
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation)
+  }
+  
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+    return (
+      <div className="calculator">
+        <Display value={100}/>
+
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- Então, para que click do button seja chamada essas funções vamos usar arrow function.

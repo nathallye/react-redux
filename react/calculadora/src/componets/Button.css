@@ -14,3 +14,24 @@
 
   outline: none;
 }
+
+.button:active { /*para o botão ficar mais escuro ao clicar*/
+  background-color: #ccc;
+}
+
+.button .double { /*vamos aplicar essa propriedade em botões que devem ocupar duas posições*/
+  grid-column: span 2;
+}
+
+.button .triple { /*vamos aplicar essa propriedade em botões que devem ocupar três posições*/
+  grid-column: span 3;
+}
+
+.button .operation { /*vamos aplicar essa propriedade em botões de operações*/
+  background-color: #fa8231;
+  color: #fff;
+}
+
+.button .operation:active {
+  background-color: #fa8231cc;
+}

@@ -5,6 +5,19 @@ import Button from "../componets/Button";
 import Display from "../componets/Display";
 
 export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
   render() {
     return (
       <div className="calculator">
