@@ -1,0 +1,16 @@
+:root { /*para criar variáveis css*/
+  --background-button: #f0f0f0;
+  --border-button: solid 1px #888;
+}
+
+.button {
+  font-size: 1.4rem;
+
+  border: none;
+  border-right: var(--border-button);
+  border-bottom: var(--border-button);
+
+  background-color: var(--background-button);
+
+  outline: none;
+}

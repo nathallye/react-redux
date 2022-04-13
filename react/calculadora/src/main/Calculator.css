@@ -6,7 +6,9 @@
   border-radius: 5px;
 
   overflow: hidden; /*overflow: propriedade especifica se o conteúdo deve ser recortado ou adicionado barras de rolagem quando o conteúdo de um elemento for muito grande para caber na área especificada; hidden- O estouro é cortado e o restante do conteúdo ficará invisível*/
-
-  background-color: red; /*temporário*/
+ 
+  display: grid; /*coloca os elementos um embaixo do outro usando o mesmo tamanho para todos os elementos*/
+  grid-template-columns: repeat(4, 25%); /*vamos ter 4 colunas, cada uma ocupando 25%*/
+  grid-template-rows: 1fr 48px 48px 48px 48px 48px; /*a primeira linha vai ser 1fr(um fragmento) que vai pegar o restante do tamanho disponivel em tela e 48px para cada uma das 5 linhas restante dessa grid*/
 }
 
