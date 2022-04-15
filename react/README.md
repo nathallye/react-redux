@@ -2745,11 +2745,11 @@ export default class Calculator extends Component {
   background-color: #ccc;
 }
 
-.button-double { /*vamos aplicar essa propriedade em botões que devem ocupar duas posições*/
+.button.double { /*vamos aplicar essa propriedade em botões que devem ocupar duas posições*/
   grid-column: span 2;
 }
 
-.button-triple { /*vamos aplicar essa propriedade em botões que devem ocupar três posições*/
+.button.triple { /*vamos aplicar essa propriedade em botões que devem ocupar três posições*/
   grid-column: span 3;
 }
 ```
@@ -2778,20 +2778,20 @@ export default class Calculator extends Component {
   background-color: #ccc;
 }
 
-.button .double { /*vamos aplicar essa propriedade em botões que devem ocupar duas posições*/
+.button.double { /*vamos aplicar essa propriedade em botões que devem ocupar duas posições*/
   grid-column: span 2;
 }
 
-.button .triple { /*vamos aplicar essa propriedade em botões que devem ocupar três posições*/
+.button.triple { /*vamos aplicar essa propriedade em botões que devem ocupar três posições*/
   grid-column: span 3;
 }
 
-.button .operation { /*vamos aplicar essa propriedade em botões de operações*/
+.button.operation { /*vamos aplicar essa propriedade em botões de operações*/
   background-color: #fa8231;
   color: #fff;
 }
 
-.button .operation:active {
+.button.operation:active {
   background-color: #fa8231cc;
 }
 ```
@@ -2965,12 +2965,6 @@ export default class Calculator extends Component {
 - A segunda função, responsável por setar a operação vai se chamar _setOperation_ e vai receber como parâmetro a operação. E a priori, vamos colocar para ela apenas retornar no console a _operation_ recebida:
 
 ``` JavaScript
-import React, { Component } from "react";
-
-import "./Calculator.css";
-import Button from "../componets/Button";
-import Display from "../componets/Display";
-
 export default class Calculator extends Component {
 
   clearMemory() {
@@ -3012,12 +3006,6 @@ export default class Calculator extends Component {
 - Por fim, a próxima função vai ser responsável por adicionar um digito e ela vai se chamar _addDigit_ e vai receber como parâmetro um digito _n_. E a priori, vamos colocar para ela apenas retornar no console o digito recebido:
 
 ``` JavaScript
-import React, { Component } from "react";
-
-import "./Calculator.css";
-import Button from "../componets/Button";
-import Display from "../componets/Display";
-
 export default class Calculator extends Component {
 
   clearMemory() {
@@ -3060,4 +3048,628 @@ export default class Calculator extends Component {
 }
 ```
 
-- Então, para que click do button seja chamada essas funções vamos usar arrow function.
+- Então, para que click do button seja chamada essas funções vamos usar arrow function. E vamos colocar essas arrow function dentro diretamente do render, pois vamos usar elas em vários botões.
+Primeiramente, vamos criar uma constante chamada _addDigit_ que vai receber uma arrow function que vai receber um _n_ e invoca _this.addDigit_(esse this de fato, dentro do render representa o objeto atual, então estamos chamando a função _addDigit_) passando esse _n_:
+
+``` JavaScript
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    const addDigit = n => this.addDigit(n); // criamos uma função arrow com o mesmo nome, essa função vai garantir que o this seja chamado corretamente
+
+    return (
+      <div className="calculator">
+        <Display value={100}/>
+
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- Vamos fazer o mesmo para a função _setOperation_:
+
+``` JavaScript
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+    
+    const setOperation = op => this.setOperation(operation);
+    const addDigit = n => this.addDigit(n);
+    
+    return (
+      <div className="calculator">
+        <Display value={100}/>
+
+        <Button label="AC"/>
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- Já a function _clearMemory_ como vamos chamá-la apenas uma vez no button AC, vamos colocá-la diretamente:
+
+``` JavaScript
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    const addDigit = n => this.addDigit(n);
+    const setOperation = op => this.setOperation(op);
+
+    return (
+      <div className="calculator">
+        <Display value={100}/>
+
+        <Button label="AC" click={() => this.clearMemory()}/> {/*O evento click recebe uma arrow function apontando para this.clearMemory*/}
+        <Button label="/"/>
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*"/>
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-"/>
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+"/>
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="="/>
+      </div>
+    )
+  }
+}
+```
+
+- O próximo passo é nas label que são uma operação, vamos chamar o evento click e chamar a constante _setOperation_ que recebeu uma arrow funcion que aponta para a função principal _this.setOperation_. Como já criamos a constante com arrow function podemos chamar a constante diretamente:
+
+``` JavaScript
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    const addDigit = n => this.addDigit(n);
+    const setOperation = op => this.setOperation(op);
+
+    return (
+      <div className="calculator">
+        <Display value={100} />
+
+        <Button label="AC" click={() => this.clearMemory()} /> 
+        <Button label="/" click={setOperation} />
+        <Button label="7"/>
+        <Button label="8"/>
+        <Button label="9"/>
+        <Button label="*" click={setOperation} />
+        <Button label="4"/>
+        <Button label="5"/>
+        <Button label="6"/>
+        <Button label="-" click={setOperation} />
+        <Button label="1"/>
+        <Button label="2"/>
+        <Button label="3"/>
+        <Button label="+" click={setOperation} />
+        <Button label="0"/>
+        <Button label="."/>
+        <Button label="=" click={setOperation} />
+      </div>
+    )
+  }
+}
+```
+
+- Agora podemos fazer o mesmo nas label que são um digito, vamos chamar o evento click e chamar a constante _addDigit_ que recebeu uma arrow funcion que aponta para a função principal _this.addDigit_. Como já criamos a constante com arrow function podemos chamar a constante diretamente:
+
+``` JavaScript
+export default class Calculator extends Component {
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    const addDigit = n => this.addDigit(n);
+    const setOperation = op => this.setOperation(op);
+
+    return (
+      <div className="calculator">
+        <Display value={100} />
+
+        <Button label="AC" click={() => this.clearMemory()} /> 
+        <Button label="/" click={setOperation} />
+        <Button label="7" click={addDigit} />
+        <Button label="8" click={addDigit} />
+        <Button label="9" click={addDigit} />
+        <Button label="*" click={setOperation} />
+        <Button label="4" click={addDigit} />
+        <Button label="5" click={addDigit} />
+        <Button label="6" click={addDigit} />
+        <Button label="-" click={setOperation} />
+        <Button label="1" click={addDigit} />
+        <Button label="3" click={addDigit} />
+        <Button label="+" click={setOperation} />
+        <Button label="0" click={addDigit} />
+        <Button label="." click={addDigit} />
+        <Button label="=" click={setOperation} />
+      </div>
+    )
+  }
+}
+```
+
+- Vale resaltar que só criamos as contantes que recebem as arrow function para resolver o this chamar o objeto atual. Temos duas formas de resolver isso, da forma que fizemos acima criando a arrow function ou criando um construtor e fazer o bind uma única vez, desse modo podemos chamar o this e a function diretamente:
+
+``` JavaScript
+export default class Calculator extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    // const addDigit = n => this.addDigit(n);
+    // const setOperation = op => this.setOperation(op);
+
+    return (
+      <div className="calculator">
+        <Display value={100} />
+
+        <Button label="AC" click={this.clearMemory} /> 
+        <Button label="/" click={this.setOperation} />
+        <Button label="7" click={this.addDigit} />
+        <Button label="8" click={this.addDigit} />
+        <Button label="9" click={this.addDigit} />
+        <Button label="*" click={this.setOperation} />
+        <Button label="4" click={this.addDigit} />
+        <Button label="5" click={this.addDigit} />
+        <Button label="6" click={this.addDigit} />
+        <Button label="-" click={this.setOperation} />
+        <Button label="1" click={this.addDigit} />
+        <Button label="2" click={this.addDigit} />
+        <Button label="3" click={this.addDigit} />
+        <Button label="+" click={this.setOperation} />
+        <Button label="0" click={this.addDigit} />
+        <Button label="." click={this.addDigit} />
+        <Button label="=" click={this.setOperation} />
+      </div>
+    )
+  }
+}
+```
+
+- Para finalizar, dentro do button _AC_ vamos aplicar a propriedade _triple_(automáticamente o button vai passar a ocupar três colunas, não precisamos passar o valor, basta a propriedade). No button 0 vamos aplicar a propriedade _double_. Por fim, todos os button que representão operações vamos aplicar a props _operation_:
+
+``` JavaScript
+export default class Calculator extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    return (
+      <div className="calculator">
+        <Display value={100} />
+
+        <Button label="AC" click={this.clearMemory} triple/> 
+        <Button label="/" click={this.setOperation} operation/>
+        <Button label="7" click={this.addDigit} />
+        <Button label="8" click={this.addDigit} />
+        <Button label="9" click={this.addDigit} />
+        <Button label="*" click={this.setOperation} operation/>
+        <Button label="4" click={this.addDigit} />
+        <Button label="5" click={this.addDigit} />
+        <Button label="6" click={this.addDigit} />
+        <Button label="-" click={this.setOperation} operation/>
+        <Button label="1" click={this.addDigit} />
+        <Button label="2" click={this.addDigit} />
+        <Button label="3" click={this.addDigit} />
+        <Button label="+" click={this.setOperation} operation/>
+        <Button label="0" click={this.addDigit} double/>
+        <Button label="." click={this.addDigit} />
+        <Button label="=" click={this.setOperation} operation/>
+      </div>
+    )
+  }
+}
+```
+
+### Implementando a lógica da calculadora
+
+- Criar o estado inicial para depois manipularmos. Fora da classe, vamos definir uma constante _initialState_ que vai receber as seguintes propriedades: _displayValue_ vai ser o valor a ser exibido no display da calculadora; _clearDisplay_ propriedade que vai informar se precisa ou não limpar o display, inicialmente vai começar com o valor booleano _false_; _operation_ variável que vai armazenar a operação corrente; _values_ array com dois valores, pois no momento que colocamos o valor e em seguida clica na operação, na próxima vez ele vai limpar o display e vai armazenar o segundo valor; _current_ propriedade para verificar se estamos manipulando value de indice 0 do array ou o value de indice 1, vai iniciar com o valor 0:
+
+``` JavaScript
+import React, { Component } from "react";
+
+import "./Calculator.css";
+import Button from "../componets/Button";
+import Display from "../componets/Display";
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+}
+export default class Calculator extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    return (
+      <div className="calculator">
+        <Display value={100} />
+
+        <Button label="AC" click={this.clearMemory} triple/> 
+        <Button label="/" click={this.setOperation} operation/>
+        <Button label="7" click={this.addDigit} />
+        <Button label="8" click={this.addDigit} />
+        <Button label="9" click={this.addDigit} />
+        <Button label="*" click={this.setOperation} operation/>
+        <Button label="4" click={this.addDigit} />
+        <Button label="5" click={this.addDigit} />
+        <Button label="6" click={this.addDigit} />
+        <Button label="-" click={this.setOperation} operation/>
+        <Button label="1" click={this.addDigit} />
+        <Button label="2" click={this.addDigit} />
+        <Button label="3" click={this.addDigit} />
+        <Button label="+" click={this.setOperation} operation/>
+        <Button label="0" click={this.addDigit} double/>
+        <Button label="." click={this.addDigit} />
+        <Button label="=" click={this.setOperation} operation/>
+      </div>
+    )
+  }
+}
+```
+
+- Criamos essa constante initialState, pois a função _clearMemory_ vai chamar ela e voltar o display estado inicial, além de que o _state_ vai fazer um clone desse objeto. Por isso, foi criada de forma separada para não ser alterada diretamente. 
+Então, dentro da classe podemos criar a variável _state_ para startar o estado, recebendo tudo que a variável inicialState possui dentro dela:
+
+``` JavaScript
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+}
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    console.log('limpar');
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Além de que, caso o _clearMemory_ seja invocado vai chamar a função _this.setState_ e atribuir os valores de _initialState_, valtando o estado para o inicio:
+
+``` JavaScript
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+}
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- O próximo passo, é fazer com que o Display aponte para o _value_ state e não mais para um valor fixo. Portanto, vamos inserir em value o valor _this.state.displayValue_:
+
+``` JavaScript
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+}
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    console.log(n);
+  }
+
+  render() {
+
+    return (
+      <div className="calculator">
+        <Display value={this.state.displayValue} />
+
+        <Button label="AC" click={this.clearMemory} triple/> 
+        <Button label="/" click={this.setOperation} operation/>
+        <Button label="7" click={this.addDigit} />
+        <Button label="8" click={this.addDigit} />
+        <Button label="9" click={this.addDigit} />
+        <Button label="*" click={this.setOperation} operation/>
+        <Button label="4" click={this.addDigit} />
+        <Button label="5" click={this.addDigit} />
+        <Button label="6" click={this.addDigit} />
+        <Button label="-" click={this.setOperation} operation/>
+        <Button label="1" click={this.addDigit} />
+        <Button label="2" click={this.addDigit} />
+        <Button label="3" click={this.addDigit} />
+        <Button label="+" click={this.setOperation} operation/>
+        <Button label="0" click={this.addDigit} double/>
+        <Button label="." click={this.addDigit} />
+        <Button label="=" click={this.setOperation} operation/>
+      </div>
+    )
+  }
+}
+```
+
+- Agora, vamos implementar condicionais na função _addDigit_. Se a calculadora receber um digito ponto "."(n === ".") e o valor que está no display(this.state.displayValue) já contém um ponto(includes(".")), significa que não podemos adicionar um segundo ponto nesse número, essa tentativa vai ser ignorada e o código vai seguir(return):
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
