@@ -36,6 +36,38 @@ export default class Calculator extends Component {
     if (n === "." && this.state.displayValue.includes(".")) {
       return
     }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay
+    // console.log("clearDisplay: ")
+    // console.log(clearDisplay);
+    
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+    // console.log("currentValue: ")
+    // console.log(currentValue);
+
+    const displayValue = currentValue + n; // OU newDisplayValue
+    // console.log("displayValue: ")
+    // console.log(displayValue);
+
+    this.setState({ displayValue, clearDisplay: false }); // Aqui receberia CHAVE: VALOR => this.setState({ displayValue: newDisplayValue, ...}); Mas colocamos a chave com o mesmo valor que está dentro do state que quando passarmos para o setState usamos apenas o nome do atributo que já reflete no nome da chave que é o mesmo;
+
+    if (n !== ".") {
+      const i = this.state.current;
+      // console.log("i: ")
+      // console.log(i);
+      const newValue = parseFloat(displayValue);
+      // console.log("newValue: ")
+      // console.log(newValue);
+      const values = [...this.state.values];
+      // console.log("values: ");
+      // console.log(values);
+      values[i] = newValue;
+      this.setState({ values });
+      // console.log("values depois do setState: ");
+      // console.log(values);
+    }
+
   }
 
   render() {
@@ -68,3 +100,4 @@ export default class Calculator extends Component {
     )
   }
 }
+

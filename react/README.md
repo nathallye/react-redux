@@ -3673,3 +3673,536 @@ export default class Calculator extends Component {
 }
 ```
 
+-O próximo passo dentro da função _addDigit_ é criar uma variável chamada _clearDisplay_. A constante _clearDisplay_ vai ter dois cenários. O primeiro cenário vai ser quando o display conter apenas o digito 0, pois a medida que adicionarmos o digito diferente de 0 vai limpar o display e ir concatenando os digitos. A segunda situação é quando a variável _clearDisplay_ do objeto _State_(que clonou o objeto _initialState_) for _true_:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.states.clearDisplay // a constante vai receber um valor booleano, se o valor no display for igual a 0(true); OU o valor da variável clearDisplay do objeto state for true... clearDisplay vai ser true, caso nenhuma das condições seja true, vai receber false
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- O próximo passo, é criar uma constante chamada _currentValue_ e ela vai depender da variável _clearDisplay_... vai depender se o display vai ser limpo ou não. 
+Se o display for ser limpo, ou seja, _clearDisplay_ for _true_ o valor _currentValue_ vai ser _vazio_. 
+Se o display não for ser limpo (senão), ou seja, _clearDisplay_ for _false_,  _currentValue_ vai receber o valor atual que está no display(this.state.displayValue). Vamos usar o operador ternário:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.states.clearDisplay
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- A próxima constante a ser criada vai ser o novo valor que vamos colocar no display, ela vai ser chamada de _displayValue_ que vai receber o _currentValue_ + o digito _n_ que for clicado:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.states.clearDisplay
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+
+    const displayValue = currentValue + n;
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Agora, o próximo passo é mudarmos o estado da aplicação, por hora quando clicamos nos digitos não ocorre nada no valor do display, portanto vamos chamar a função _this.setState_ e passar como valores o _displayValue_ e o _clearDisplay_ recebendo _false_ (pois uma vez que digitamos o valor e já limpamos o display com a variável _clearDisplay_ igual a true, alteramos clearDisplay para false):
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay // a constante vai receber um valor booleano, se o valor no display for igual a 0(true); OU o valor da variável clearDisplay do objeto state for true... clearDisplay vai ser true, caso nenhuma das condições seja true, vai receber false
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue; 
+
+    const displayValue = currentValue + n; // OU newDisplayValue
+
+    this.setState({ displayValue, clearDisplay: false }); // Aqui receberia CHAVE: VALOR => this.setState({ displayValue: newDisplayValue, ...}); Mas colocamos a chave com o mesmo valor que está dentro do state que quando passarmos para o setState usamos apenas o nome do atributo que já reflete no nome da chave que é o mesmo;
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- O próximo passo é inserirmos uma condicional para que sempre que for digitado um valor diferente de ponto, ou seja, um número. Queremos armazenar esse número digitado no array _values_ do objeto _state_, só que o valor que contém no _displayValue_ é uma string, e queremos armazenar no array como float.  
+Dentro da condicional _if_ se for digitado qualquer valor diferente de ponto, vai ser armazenado na contante _i_ o indice do array que estamos trabalhando atualmente:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay 
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+
+    const displayValue = currentValue + n;
+
+    this.setState({ displayValue, clearDisplay: false });
+
+    if (n !== ".") {
+      const i = this.state.current;
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- E agora podemos criar uma constante chamada _newValue_ para convertermos o valor do _displayValue_(contém o valor do valor corrente do display + valor n que foi recebido na função) para um float:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay 
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+
+    const displayValue = currentValue + n;
+
+    this.setState({ displayValue, clearDisplay: false });
+
+    if (n !== ".") {
+      const i = this.state.current;
+      const newValue = parseFloat(displayValue);
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Desse modo, podemos criar uma nova constante chamada _values_ que vai receber o clone do array _values_ do objeto state:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay 
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+
+    const displayValue = currentValue + n;
+
+    this.setState({ displayValue, clearDisplay: false });
+
+    if (n !== ".") {
+      const i = this.state.current;
+      const newValue = parseFloat(displayValue);
+      const values = [...this.state.values];
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Assim, podemos fazer com que o array _values_ receba os valores de acordo com o indice:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay 
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+
+    const displayValue = currentValue + n;
+
+    this.setState({ displayValue, clearDisplay: false });
+
+    if (n !== ".") {
+      const i = this.state.current;
+      const newValue = parseFloat(displayValue);
+      const values = [...this.state.values];
+      values[i] = newValue;
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Por fim, uma vez que mudamos os valores do array, vamos adicionar esse array no estado do objeto:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    console.log(operation);
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay 
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+
+    const displayValue = currentValue + n;
+
+    this.setState({ displayValue, clearDisplay: false });
+
+    if (n !== ".") {
+      const i = this.state.current;
+      const newValue = parseFloat(displayValue);
+      const values = [...this.state.values];
+      values[i] = newValue;
+      this.setState({ values });
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
