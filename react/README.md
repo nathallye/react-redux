@@ -4206,3 +4206,424 @@ export default class Calculator extends Component {
   }
 }
 ```
+
+- Por hora, nossa calculadora só está armazenado o valor do índice 0 do array values. Agora vamos implementar a segunda parte da lógica, para que quando clicarmos na operação temos que passar a armazenar os valores no índice 1 do array.
+Primeiramente, na função _setOperation_ se o valor _current_ for igual a 0 temos que mudá-lo para 1, para começarmos a mexer no segundo valor do array. 
+Além disso, temos que mudar a variável _clearDisplay_ para true, para que o display seja limpo, pois depois que setarmos uma operação, os próximos digitos já vão pertencer a outro valor.
+O terceiro valor que precisamos alterar o estado é a _operation_ que vamos receber nessa função _setOperation_:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    }
+  } 
+
+  addDigit(n) {
+    if (n === "." && this.state.displayValue.includes(".")) {
+      return
+    }
+
+    const clearDisplay = this.state.displayValue === "0" 
+      || this.state.clearDisplay 
+
+    const currentValue = clearDisplay ? '' : this.state.displayValue;
+
+    const displayValue = currentValue + n;
+
+    this.setState({ displayValue, clearDisplay: false });
+
+    if (n !== ".") {
+      const i = this.state.current;
+      const newValue = parseFloat(displayValue);
+      const values = [...this.state.values];
+      values[i] = newValue;
+      this.setState({ values });
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Agora, na próxima vez que clicarmos no igual ou em outra operação, significa que ele vai pegar esses dois valores, processar, gerar o resultado e armazená-lo no primeiro elemento do array(índice 0), limpa o elemento de índice 1 para ficar livre para receber outro valor.
+Quando clicamos em uma operação, a função _setOperation_ é chamada e caso não estivermos mexendo no primeiro elemento do array(índice 0), vamos criar a lógica para concluir a operação(else):
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    } else {
+
+    }
+  } 
+
+  addDigit(n) {
+    // [...]
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- E dentro do else vamos gerar o resultado, caso o usuário clique no operador "=". Para isso, vamos criar uma constante chamada _equal_ que vai receber o valor _true_ caso o operador que o usuário clicou seja igual a "=":
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    } else {
+      const equal = operation === "=";
+    }
+  } 
+
+  addDigit(n) {
+    // [...]
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Outro caso a ser tratado é quando já temos o v1, a operação e o v2, e ao invés de clicarmos no igual para finalizar a operação, clicamos em outro operado. Portanto, os dois primeiros valores e a sua respectiva operação vão ter que ser processados e armazenado o resultado no índice 0. 
+O primeiro ponto que devemos dar atenção, é quando clicamos na operação, sabemos que ela chama a função _setOperation_ e armazena a operação, mas como já temos a operação anterior, nesse caso precisamos pegar essa _operation_ já armazenada. Para isso, vamos salvar ela em uma constante chamada _currentOperation_:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    } else {
+      const equal = operation === "=";
+      const currentOperation = this.state.operation;
+    }
+  } 
+
+  addDigit(n) {
+    // [...]
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- E agora vamos criar um clone do array atual _values_ em uma variável chamada _values_ e em seguida fazer o calculo do valor "em cima" da função _eval_ e inserir na primeira possição desse novo array. Vamos usar a função _eval_, mas também poderiamos usar um _switch case_ ou _if else_ de acordo com a operação digitada, mas para evitar o código ficar muito grande podemos usar essa função.
+Além disso, não podemos esquecer que o resultado dessa operação deve ser armazenado na posição de índice 0 desse array, e a posição de índice 1 deve ser zerada:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    } else {
+      const equal = operation === "=";
+      const currentOperation = this.state.operation;
+
+      const values = [...this.state.values];
+      values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`);
+      values[1] = 0;
+    }
+  } 
+
+  addDigit(n) {
+    // [...]
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- E para que tudo isso reflita no estado da aplicação, vamos chamar a função _setState_ e passar os novos valores. 
+O _displayValue_ vai receber o valor do índice 0, para exibir no display o resultado da primeira operação; Já o _operation_ se for "="(equal) a operation vai receber _null_, ou seja, essa operação vai ser concluida, se não(vai ser outra operação) _operation_ vai receber a nova operação; 
+O valor _current_ se o usuário clicou no "="(equal) vai continuar com o índice 0, senão(no caso vai ser outra operação) o usuário vai passar a mexer no índice 1;
+Outro ponto é, se o usuário clicou em "="(equal) não vai precisar limpar o display(_clearDisplay_: false), só vai ser necessário limpar o display se for outra operação(ou seja, diferente de equal);
+Por fim, precisamos passar o array _values_ para alterar o seu estado:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    } else {
+      const equal = operation === "=";
+      const currentOperation = this.state.operation;
+
+      const values = [...this.state.values];
+      values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`);
+      values[1] = 0;
+
+      this.setState({
+        displayValue: values[0],
+        operation: equal ? null : operation,
+        current: equal ? 0 : 1,
+        clearDisplay: !equal, // se for diferente de equal retorna true, se for igual retorna false
+        values
+      });
+    }
+  } 
+
+  addDigit(n) {
+    // [...]
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Podemos notar que o próprio React gera uma advertência a respeito do uso da função _eval_, para capturar os erros podemos usar o _try catch_:
+
+``` JavaScript
+// [...]
+
+const initialState = {
+  displayValue: '0',
+  clearDisplay: false,
+  operation: null,
+  values: [0, 0],
+  current: 0
+};
+
+export default class Calculator extends Component {
+
+  state = { ...initialState };
+
+  constructor(props) {
+    super(props)
+
+    this.clearMemory = this.clearMemory.bind(this);
+    this.setOperation = this.setOperation.bind(this);
+    this.addDigit = this.addDigit.bind(this);
+  }
+
+  clearMemory() {
+    this.setState({ ...initialState });
+  }
+
+  setOperation(operation) {
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    } else {
+      const equal = operation === "=";
+      const currentOperation = this.state.operation;
+
+      const values = [...this.state.values];
+      try {
+        values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`);
+      } catch (error) {
+        values[0] = this.state.values[0]; // se der um erro vamos pegar o valor atual do estado 
+      }
+      values[1] = 0;
+
+      this.setState({
+        displayValue: values[0],
+        operation: equal ? null : operation,
+        current: equal ? 0 : 1,
+        clearDisplay: !equal, // se for diferente de equal retorna true, se for igual retorna false
+        values
+      });
+    }
+  } 
+
+  addDigit(n) {
+    // [...]
+    }
+  }
+
+  render() {
+
+    return (
+      // [...]
+    )
+  }
+}
+```
+
+- Ainda sim, o mais recomendado é substituir por um _switch case_ ou _if else_ para executar a operação de acordo com a operação digitada:

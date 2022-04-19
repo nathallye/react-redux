@@ -29,8 +29,29 @@ export default class Calculator extends Component {
   }
 
   setOperation(operation) {
-    console.log(operation);
-  } 
+    if (this.state.current === 0) {
+      this.setState({ operation, current: 1, clearDisplay: true });
+    } else {
+      const equal = operation === "=";
+      const currentOperation = this.state.operation;
+
+      const values = [...this.state.values];
+      try {
+        values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`);
+      } catch (error) {
+        values[0] = this.state.values[0]; // se der um erro vamos pegar o valor atual do estado 
+      }
+      values[1] = 0;
+
+      this.setState({
+        displayValue: values[0],
+        operation: equal ? null : operation,
+        current: equal ? 0 : 1,
+        clearDisplay: !equal, // se for diferente de equal retorna true, se for igual retorna false
+        values
+      });
+    }
+  }  
 
   addDigit(n) {
     if (n === "." && this.state.displayValue.includes(".")) {
