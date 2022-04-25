@@ -169,7 +169,7 @@ const Home = props => {
   return (
     <div className="Home">
       <h1>Início</h1>
-      <p>Bem vindo!</p>
+      <h2>Bem vindo!</h2>
     </div>
   )
 }
@@ -184,7 +184,7 @@ const About = props => {
   return (
     <div className="About">
       <h1>Sobre</h1>
-      <p>O nosso sistema foi criado...</p>
+      <h2>O nosso sistema foi criado...</h2>
     </div>
   )
 }
@@ -390,7 +390,7 @@ const Home = props => {
   return (
     <div className="Home">
       <h1>Início</h1>
-      <p>Bem vindo!</p>
+      <h2>Bem vindo!</h2>
     </div>
   )
 }
@@ -405,7 +405,7 @@ const About = props => {
   return (
     <div className="About">
       <h1>Sobre</h1>
-      <p>O nosso sistema foi criado...</p>
+      <h2>O nosso sistema foi criado...</h2>
     </div>
   )
 }
@@ -775,7 +775,8 @@ Primeiramente, vamos colocar o _display_ como _flex_. Como só temos um único c
 ### Navegação simples
 
 - Vamos começar a configuração do nosso projeto para usar o React Router. 
-Primeiramente, vamos importar o pacote _BrowserRouter_ do _react-router-dom_ e envolver os componentes da aplicação/_App_ com a tag _Router_(_BrowserRouter_ referenciado com _Router_):
+Link documentação: https://v5.reactrouter.com/web/example/basic.
+Primeiramente, vamos importar o hook _BrowserRouter_ do _react-router-dom_ e envolver os componentes da aplicação/_App_ com a tag _Router_(_BrowserRouter_ referenciado com _Router_):
 
 ``` JavaScript
 import "./App.css"
@@ -799,7 +800,7 @@ const App = props => {
 export default App;
 ```
 
-- No componente _Content_, vamos importar importar os pacotes _Switch_ e _Route_ do _react-router-dom_ e dentro da tag _main_ onde vai ficar o conteúdo, seguindo a documentação temos que usar a tag _Switch_ e dentro dele a tag _Route_:
+- No componente _Content_, vamos importar importar os hooks _Switch_ e _Route_ do _react-router-dom_ e dentro da tag _main_ onde vai ficar o conteúdo, seguindo a documentação temos que usar a tag _Switch_ e dentro dele a tag _Route_:
 
 ``` JavaScript
 import "./Content.css"
@@ -874,18 +875,17 @@ import "./Content.css"
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
+import Home from "../../views/examples/Home";
 import About from "../../views/examples/About";
-import About from "../../views/examples/Home";
 
 const Content = props => {
   return (
     <main className="Content">
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
       </Routes>
-      <Routes>
-        <Route path="/home" element={<Home />} />
-      </Routes>
+      
     </main>
   )
 }
@@ -893,7 +893,7 @@ const Content = props => {
 export default Content;
 ```
 
-- Também seguindo a documentação, vamos substituir o elemento link/_a_ pela tag _Link_ do react-router-dom. Dentro do nosso componente que contém os links(Menu), vamos importar o pacote _Link_ do _react-router-dom_ e fazer essa substituição:
+- Também seguindo a documentação, vamos substituir o elemento link/_a_ pela tag _Link_ do react-router-dom. Dentro do nosso componente que contém os links(Menu), vamos importar o hook _Link_ do _react-router-dom_ e fazer essa substituição:
 
 ``` JavaScript
 import "./Menu.css"
@@ -926,3 +926,270 @@ export default Menu;
 
 ### Navegação com parâmetro
 
+- Agora vamos criar um outro compomente chamado _Param_ dentro do diretório _examples_ para aprendermos como passar parâmetros a partir da url. 
+Link documentação: https://v5.reactrouter.com/web/example/url-params.
+
+- Vamos aproveitar a mesma estrutura do componente funcional _Home_: 
+
+``` JavaScript
+import React from "react";
+
+const Param = props => {
+  return (
+    <div className="Param">
+      <h1>Param</h1>
+      <h2>Valor: ???!</h2>
+    </div>
+  )
+}
+
+export default Param;
+```
+
+- Em seguida vamos referênciar esse componente dentro do _Menu_(como Link):
+
+``` JavaScript
+import "./Menu.css"
+import React from "react";
+import { Link } from "react-router-dom"
+
+const Menu = props => {
+  return (
+    <aside className="Menu">
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Início</Link>
+          </li>
+          <li>
+            <Link to="/param">Param #01</Link>
+          </li>
+          <li>
+            <Link to="/param">Param #02</Link>
+          </li>
+          <li>
+            <Link to="/about">Sobre</Link>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+  )
+}
+
+export default Menu;
+```
+
+- E também vamos referênciar esse componente _Param_ no componente _Content_ dentro da tag _Route_:
+
+``` JavaScript
+import "./Content.css"
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+
+import Home from "../../views/examples/Home";
+import About from "../../views/examples/About";
+import Param from "../../views/examples/Param";
+
+const Content = props => {
+  return (
+    <main className="Content">
+      <Routes>
+        <Route path="/" element={<Home />} /> {/*path /, aponta para a página principal*/}
+        <Route path="/about" element={<About />} />
+        <Route path="/param" element={<Param />} />
+      </Routes>
+    </main>
+  )
+}
+
+export default Content;
+```
+
+- E para conseguirmos adicionar parâmetros dentro da url vamos inserir _/:id_. Que significa que esse não é um valor literal, ou seja, uma variável ou um parâmetro que será passado a apartir da url:
+
+``` JavaScript
+import "./Content.css"
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+
+import Home from "../../views/examples/Home";
+import About from "../../views/examples/About";
+import Param from "../../views/examples/Param";
+
+const Content = props => {
+  return (
+    <main className="Content">
+      <Routes>
+        <Route path="/" element={<Home />} /> 
+        <Route path="/about" element={<About />} />
+        <Route path="/param/:id" element={<Param />} />
+      </Routes>
+    </main>
+  )
+}
+
+export default Content;
+```
+
+- Mas por hora, mesmo se passarmos um id essa url, não está apontando para lugar algum. Por isso, no componente _Menu_ onde temos de fato link para _Param #01_ e _Param #02_ vamos inserir na url o id que queremos passar:
+
+``` JavaScript
+import "./Menu.css"
+import React from "react";
+import { Link } from "react-router-dom"
+
+const Menu = props => {
+  return (
+    <aside className="Menu">
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Início</Link>
+          </li>
+          <li>
+            <Link to="/param/1">Param #01</Link>
+          </li>
+          <li>
+            <Link to="/param/2">Param #02</Link>
+          </li>
+          <li>
+            <Link to="/about">Sobre</Link>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+  )
+}
+
+export default Menu;
+```
+
+- E agora? Como fazemos para pegar o paramêtro que está sendo passado no id e passar dentro do elemento _h2_ do componente _Param_? 
+Vamos importar o hook _useParams_ do _react-router-dom_ e usar essa função _useParams_ para obter o id, ou seja, a função vai retornar um objeto que dentro dele tem o id e vamos recuperar inserindo dentro de uma constante:
+
+``` JavaScript
+import React from "react";
+import { useParams } from "react-router-dom";
+
+const Param = props => {
+  
+  const { id } = useParams(); // esse id tem exatamente o mesmo nome que colocamos no Content quando definimos que o nome do parâmetro é :id
+
+  return (
+    <div className="Param">
+      <h1>Param</h1>
+      <h2>Valor: ???!</h2>
+    </div>
+  )
+}
+
+export default Param;
+```
+
+- Desse modo, podemos interpolar o valor do _id_ dentro do elemento _h2_:
+
+``` JavaScript
+import React from "react";
+import { useParams } from "react-router-dom";
+
+const Param = props => {
+  
+  const { id } = useParams();
+
+  return (
+    <div className="Param">
+      <h1>Param</h1>
+      <h2>Valor: {id}!</h2>
+    </div>
+  )
+}
+
+export default Param;
+```
+
+### Página não encontrada
+
+- Quando a url não foi mapeada/não foi encontrada o react exibe apenas uma página em branco. Podemos criar uma página de 404 para ser exibida nesses casos.
+Link documentação: https://v5.reactrouter.com/web/example/no-match.
+
+- Para exemplicarmos melhor, vamos criar um link com uma rota não existente no componente _Menu_:
+
+``` JavaScript
+import "./Menu.css"
+import React from "react";
+import { Link } from "react-router-dom"
+
+const Menu = props => {
+  return (
+    <aside className="Menu">
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Início</Link>
+          </li>
+          <li>
+            <Link to="/param/1">Param #01</Link>
+          </li>
+          <li>
+            <Link to="/param/2">Param #02</Link>
+          </li>
+          <li>
+            <Link to="/about">Sobre</Link>
+          </li>
+          <li>
+            <Link to="/naoexiste">Não existe</Link>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+  )
+}
+
+export default Menu;
+```
+
+- Em seguida, dentro do diretório _examples_ vamos criar um componente chamado _NotFound_ com a estrutura padrão de estamos usando nos demais componentes de exemplo:
+
+``` JavaScript
+import React from "react";
+
+const NotFound = props => {
+  return (
+    <div className="NotFound">
+      <h1>404</h1>
+      <h2>Opssss... Página não encontrada!</h2>
+    </div>
+  )
+}
+
+export default NotFound;
+```
+
+- E dentro do nosso componente _Content_ onde temos o _Routes_ vai criar uma _Route_ onde o path vai ser "*", que significa que qualquer uma url que não seja as que foram mapeadas vai cair no componente/_element_ _NotFound_:
+
+``` JavaScript
+import "./Content.css"
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+
+import Home from "../../views/examples/Home";
+import About from "../../views/examples/About";
+import Param from "../../views/examples/Param";
+import NotFound from "../../views/examples/NotFound";
+
+
+const Content = props => {
+  return (
+    <main className="Content">
+      <Routes>
+        <Route path="/" element={<Home />} /> 
+        <Route path="/about" element={<About />} />
+        <Route path="/param/:id" element={<Param />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </main>
+  )
+}
+
+export default Content;
+```
