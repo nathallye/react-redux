@@ -1294,7 +1294,7 @@ export default function Input(props) {
 }
 ```
 
-De tal forma que podemos notar no navegador o componente Input com o valor inicial. Mas como é um componente controlado não conseguimos alterar o valor do input. O que ele chava de verdade absoluta são os dados, ou seja, o estado do componente não mudou, não foi chamada em nenhum momento a função _setValor_ para mudar o dado. Resumindo, não conseguimos mudar o estado de um componente diretamente a partir da interface, primeiro temos que mudar o estado, para quando esse estado mudar aí sim conseguimos refletir essa mudança na interface gráfica.
+- Podemos notar no navegador o componente Input com o valor inicial. Mas como é um componente controlado não conseguimos alterar o valor do input. O que ele chama de verdade absoluta são os dados, ou seja, o estado do componente não mudou, não foi chamada em nenhum momento a função _setValor_ para mudar o dado. Resumindo, não conseguimos mudar o estado de um componente diretamente a partir da interface, primeiro temos que mudar o estado, para quando esse estado mudar aí sim conseguimos refletir essa mudança na interface gráfica.
 O caminho é unidirecional, o estado muda e altera a interface gráfica. A interface gráfica não altera o estado(isso acontece indiretamente a partir dos eventos).
 
 - Então, nesse caso, como conseguimos alterar o valor do input?
@@ -1336,7 +1336,7 @@ export default function Input(props) {
 }
 ```
 
-- Se quisermos acessar mais especificamente o _e.target.value_ vai mostrar o valor novo que foi gerado a partir do evento:
+- Se quisermos acessar mais especificamente, o _e.target.value_ vai mostrar o valor novo que foi gerado a partir do evento:
 
 ``` JavaScript
 import React, { useState } from "react";
