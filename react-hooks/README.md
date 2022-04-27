@@ -53,7 +53,7 @@ src
 
 ## useState #01
 
-- Vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseState_. Temos um componente funcional seguibndo o mesmo padrão que já vimos anteriormente:
+- Vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseState_. Temos um componente funcional seguindo o mesmo padrão que já vimos anteriormente:
 
 ``` JavaScript
 import React from "react";
@@ -568,5 +568,543 @@ export default UseState;
 ```
 
 ## useEffect
+
+Permite executar efeitos colaterais em componentes funcionais!
+
+- Para entendermos melhor como isso funciona, vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseEffect_. Temos um componente funcional seguindo o mesmo padrão que já vimos anteriormente:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const UseEffect = (props) => {
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- A ideia vai ser criarmos um input do tipo number, para que a gente possa vincular esse número ao estado do nosso componente. Vamos usar o _useState_ com o valor inicial 1 e as variável que vai receber o valor inicial vai se chamar _number_ e a variável que vai receber a função que vai alterar o valor do number vai se chamar _setNumber_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Visando uma melhor organização dos exercícios, vamos importar e referenciar o componente _SectionTitle_ e vamos passar o title via props:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Em seguida, vamos criar um elemento _input_ do type _number_ com o className _input_(para aplicar as propriedades CSS já criadas no arquivo index.css). E no atributo _value_ do input vamos apontar para o valor que está na constante _number_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <input type="number" className="input" value={number} />
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Podemos notar que no navegador o input está exibindo o _valor inicial de number_. Mas como é um _componente controlado_ não conseguimos alterar o valor do input. O que ele chama de verdade absoluta são os dados, ou seja, o estado do componente não mudou, não foi chamada em nenhum momento a função _setNumber_ para mudar o dado. 
+Resumindo, não conseguimos mudar o estado de um componente diretamente a partir da interface, primeiro temos que mudar o estado, para quando esse estado mudar aí sim conseguimos refletir essa mudança na interface gráfica.
+O caminho é unidirecional, o estado muda e altera a interface gráfica. A interface gráfica não altera o estado(isso acontece indiretamente a partir dos eventos).
+Link documentação: https://pt-br.reactjs.org/docs/forms.html.
+
+- Então, nesse caso, como conseguimos alterar o valor do input?
+Podemos mudar ele pegando o evento _onChange_, esse evento vai ser chamado toda vez que digitarmos. O _onChange_ recebe como parâmetro um evento(e) e quando esse evento for chamado vamos chamar a função que usamos para alterar o estado(_setNumber_), e passar a estrada do teclado(_e.target.value_), desse modo as alterações vão refletir na interface:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)} />
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- A outra parte que vamos fazer é exibir o valor fatorial do número inserido através do input. Ou seja, isso é efeito colateral, ao alterar o input, automáticamente vai ser feito um cálculo que vai alterar o resultado do fatorial desse number.
+Primeiramente, vamos criar outro estado que vamos chamar de _factorial_ que vai receber o valor inicial igual a 1(já que o number também inicia como 1 e o fatorial de 1 é 1) e a sua função vai se chamar _setFactorial_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      <span className="text">{number}</span>
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Vamos inserir um elemento _span_ com a classe _text_(para aplicar as propriedades CSS já criadas no arquivo index.css) com o label _"Fatorial:"_ e em seguida outro _span_ com as classes _text_ e _red_ e vamos interpolar nesse span o valor de _factorial_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <span className="text">Fatorial: </span>
+      <span className="text red">{factorial}</span>
+
+      <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Só que queremos que esses dois valores do _span_ fiquem um do lado do outro, para isso, vamos envolve-los com uma _div_, dessa forma esses elementos vão ser colocados em linha/row:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <div>
+        <span className="text">Fatorial: </span>
+        <span className="text red">{factorial}</span>
+      </div>
+      <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Agora vamos criar uma função para calcular o valor do fatorial. Essa function vai se chamar _calcFatorial_ e essa função vai receber como parâmetro um número _n_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function calcFactorial(n) {
+  
+}
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <div className="center">
+        <div>
+          <span className="text">Fatorial: </span>
+          <span className="text red">{factorial}</span>
+        </div>
+
+        <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      </div>
+      
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- O primeiro teste que vamos fazer é para garantir que não vai ser calculado o fatorial de número negativo, pois não existe. Então, vamos colocar uma condicional, se/_if_ o número/_n_ for menor/_<_ que _0_ vamos retornar _-1_(esse valor vai ser tratado dentro da interface):
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function calcFactorial(n) {
+  if(n < 0) return -1;
+}
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <div className="center">
+        <div>
+          <span className="text">Fatorial: </span>
+          <span className="text red">{factorial}</span>
+        </div>
+
+        <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      </div>
+      
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- O próximo teste vai ser se/_if_ o número/_n_ seja igual a _0_. Por definição o seu fatorial será igual a _1_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function calcFactorial(n) {
+  if(n < 0) return -1;
+  if(n === 0) return 1;
+}
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <div className="center">
+        <div>
+          <span className="text">Fatorial: </span>
+          <span className="text red">{factorial}</span>
+        </div>
+
+        <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      </div>
+      
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- E se o número passar por esses dois testes anteriores, podemos calcular o fatorial de forma correta. Vamos retornar a chamada recurssiva da própria função _calcFatorial_ e vamos passar como parâmetro _(n-1)_ e multiplicar pelo valor de _n_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function calcFactorial(n) {
+  if(n < 0) return -1;
+  if(n === 0) return 1;
+  return calcFactorial(n - 1) * n;
+}
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <div className="center">
+        <div>
+          <span className="text">Fatorial: </span>
+          <span className="text red">{factorial}</span>
+        </div>
+
+        <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      </div>
+      
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Mas não podemos apenas chamar a função que altera o valor do number(_setFatorial_) e passar a função callback _calcFatorial_ dentro dela, isso vai gerar multiplas alterações de estado e renderização, ocasionando um loop infinido. 
+Para solucionar isso, vamos usar o hook _useEffect_, esse hook recebe dois parâmetros, o primeiro vai ser o que ele chama de _EffectCallback_, que nada mais é que uma função que será chamada quando ele for gerar esse "efeito colateral" e o segundo parâmetro(opcional) é a lista de dependências que ele chama de _DependencyList_:
+
+``` JavaScript
+import React, { useEffect, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function calcFactorial(n) {
+  if(n < 0) return -1;
+  if(n === 0) return 1;
+  return calcFactorial(n - 1) * n;
+}
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  // setFatorial(calcFatorial(number));
+  useEffect(function() { // function callback, que será chamada sempre que o number(number é o "DependencyList" - segundo parametro passado para a função) modificar
+    setFactorial(calcFactorial(number)); // EffectCallback
+  }, [number]) // DependencyList
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <div className="center">
+        <div>
+          <span className="text">Fatorial: </span>
+          <span className="text red">{factorial}</span>
+        </div>
+
+        <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      </div>
+      
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Para que os calculos sejam feitos corretamente, vamos converter o valor que estamos recebendo como parâmetro na function _calFactorial_ para um valor inteiro usando o _parseInt_:
+
+``` JavaSCript
+import React, { useEffect, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function calcFactorial(num) {
+  const n = parseInt(num);
+  if(n < 0) return -1;
+  if(n === 0) return 1;
+  return calcFactorial(n - 1) * n;
+}
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  // setFatorial(calcFatorial(number));
+  useEffect(function() {
+    setFactorial(calcFactorial(number));
+  }, [number])
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício"/>
+      <div className="center">
+        <div>
+          <span className="text">Fatorial: </span>
+          <span className="text red">{factorial}</span>
+        </div>
+
+        <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      </div>
+      
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+- Podemos fazer uma condicional para exibir na interface "Fatorial: Não existe" quando o número for negativo. Usando um operador ternário, se fatorial for igual(===) a _-1_ então(?) exibir "Não existe" senão(:) exibir o próprio valor de _factorial_:
+
+``` JavaScript
+import React, { useEffect, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function calcFactorial(num) {
+  const n = parseInt(num);
+  if(n < 0) return -1;
+  if(n === 0) return 1;
+  return calcFactorial(n - 1) * n;
+}
+
+const UseEffect = (props) => {
+  const [number, setNumber] = useState(1);
+  const [factorial, setFactorial] = useState(1);
+
+  const [value, setValue] = useState(0);
+
+  // setFatorial(calcFatorial(number));
+  useEffect(function() {
+    setFactorial(calcFactorial(number));
+  }, [number])
+
+  return (
+    <div className="UseEffect">
+      <PageTitle
+        title="Hook UseEffect"
+        subtitle="Permite executar efeitos colaterais em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Fatorial: </span>
+          <span className="text red">{factorial === -1 ? "Não existe" : factorial}</span>
+        </div>
+
+        <input type="number" className="input" value={number} onChange={e => setNumber(e.target.value)}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseEffect;
+```
+
+## useRef #01
+
+Retorna um objeto mutável com a propriedade .current!
 
 
