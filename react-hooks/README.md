@@ -958,7 +958,7 @@ const UseEffect = (props) => {
 export default UseEffect;
 ```
 
-- Mas não podemos apenas chamar a função que altera o valor do number(_setFatorial_) e passar a função callback _calcFatorial_ dentro dela, isso vai gerar multiplas alterações de estado e renderização, ocasionando um loop infinido. 
+- Mas não podemos apenas chamar a função que altera o valor do number(_setFatorial_) e passar a função callback _calcFatorial_ dentro dela, isso vai gerar multiplas alterações de estado e renderizações, ocasionando um loop infinido. 
 Para solucionar isso, vamos usar o hook _useEffect_, esse hook recebe dois parâmetros, o primeiro vai ser o que ele chama de _EffectCallback_, que nada mais é que uma função que será chamada quando ele for gerar esse "efeito colateral" e o segundo parâmetro(opcional) é a lista de dependências que ele chama de _DependencyList_:
 
 ``` JavaScript
@@ -1105,6 +1105,1883 @@ export default UseEffect;
 
 ## useRef #01
 
-Retorna um objeto mutável com a propriedade .current!
+Retorna um objeto mutável com a propriedade .current! Ou seja, temos um objeto que tem dentro dele uma propriedade chamada _current_(atual) e dentro do valor da propriedade current temos o estado.
+
+- Para entendermos melhor como isso funciona, vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseRef_. Temos um componente funcional seguindo o mesmo padrão que já vimos anteriormente:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const UseRef = (props) => {
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+-  Visando uma melhor organização dos exercícios, vamos importar e referenciar o componente _SectionTitle_ e vamos passar o title via props. 
+E o primeiro objetivo vai ser criar uma _div_ com a className _center_ e dentro dessa div vamos criar um _input_ com a className _input_ e o _value_ desse input vamos vincular ao estado da constante _value1_(vamos criar usando o useState e inicializar o valor como uma string vazia("")):
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <input type="text" className="input" value={value1}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E vamos usar o evento _onChange_ para alterar o estado do componente. Ele recebe como parâmetro um evento(e) e quando esse evento for chamado vamos chamar a função que usamos para alterar o estado(_setValue1_), e passar a estrada do teclado(_e.target.value_), desse modo as alterações vão refletir na interface:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <input type="text" className="input" value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E agora, o que vamos fazer agora dentro desse componente? Queremos controlar a quantidade de vezes que esse componente ele é rendezirado. Então, para visualizarmos melhor isso, vamos criar um _span_ com a className _text_ que vai conter o texto "Valor: " e outro _span_ com a className _text_ o qual vamos interpolar o _value1_. Esses dois _span's_ vamos incluir dentro de uma div para ficarem na mesma linha/_row_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text red">{value1}</span>
+        </div>
+
+        <input type="text" className="input" value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- O _useRef_, resumidamente ele vai retornar um objeto, e ele sempre vai retornar a mesma referência, ou seja, quando temos um objeto em js e atribuímos o valor desse objeto para uma variável e depois pegamos essa variável e atribuímos para outra variável, chamamos isso, de passagem por referência, por isso o nome do hook é _useRef_, justamente porque esse hook vai retornar a referência de um objeto, de tal forma que sempre vai retornar a mesma referência e conseguimos ter um estado dentro desse objeto a partir do atributo _current_.
+E agora, queremos gerar um contador, que mostre a quantidade de vezes que o componente foi renderizado/o valor foi alterado. Vamos criar uma constante _count_ e vamos chamar o hook _useRef_ que vai retornar um objeto, que vai conter o valor inicial que vamos passar(ele vai se encontrar dentro do atributo .current). O valor inicial vai ser _0_:
+
+``` JavaScript
+import React, { useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const count = useRef(0);
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1}</span>
+        </div>
+
+        <input type="text" className="input" value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- O como fazemos agora para ter acesso ao valor de _count_? Primeiramente, vamos criar um elemento _span_ com as classes _text_ e _red_ e interpolar o valor de count. Ao invés de chamarmos diretamente _count_ vamos chamar _count.current_, desse modo, conseguimos acessar o valor que está armazenado dentro desse objeto já que _count_ é a referência do objeto e sempre que o componente for renderizado novamente vamos sempre ter acesso ao mesmo objeto/a mesma referência: 
+
+``` JavaScript
+import React, { useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const count = useRef(0);
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E como conseguimos alterar o valor do _count_ para que saibamos quantas vezes esse componente foi renderizado? Uma das diferenças em relação ao _useRef_ e o _useState_ é que quando o _ref_ é alterado não há a necessidade de renderizar novamente o componente, ou seja, podemos alterar o valor do atributo _current_ e isso não vai causar uma nova renderização do componente.
+Daí o fato que conseguimos chamar diretamente o _count.current_ e alterar o seu valor incrementando +1(não vai ocasionar um loop infinito de renderizações), assim:
+
+``` JavaScript
+import React, { useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const count = useRef(0);
+
+  count.current += 1;
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Mas, ele está chamando em todas as renderizações, independente se o _value1_ foi alterado ou não. 
+Como queremos que o valor de _current_ seja alterado apenas quando o _value1_ for alterado, a forma mais correta de fazer isso é colocando dentro de um _useEffect_ e sempre que houver uma alteração no _value1_ o efeito colateral vai ser incrementar +1 em _count.current_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const count = useRef(0);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+  }, [value1])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+## useRef #02
+
+- A priori, visando uma melhor organização dos exercícios, vamos importar e referenciar o componente _SectionTitle_ e vamos passar o title via props.
+Em seguida, vamos criar uma _div_ com a class _center_, e dentro dela inserir um novo _input_ vinculando o _value_ desse input ao estado da constante _value2_(vamos criar usando o useState e inicializar o valor como uma string vazia("")). 
+E vamos usar o evento _onChange_ para alterar o estado do componente. Sabemos que, ele como parâmetro um evento(e) e quando esse evento for chamado vamos chamar a função que usamos para alterar o estado(_setValue2_), e passar a estrada do teclado(_e.target.value_), desse modo as alterações vão refletir na interface:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+  const count = useRef(0);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+  }, [value1])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Podemos notar que quando digitamos no input vinculado ao _value2_ não gera nenhum efeito no contador/_count_. Para que esse efeito colateral seja gerado, vamos colocar o _value2_ na _DependencyList_ do _useEffect_, que irá chamar a função callback sempre que esses elementos da _lista de dependência_ forem alterados:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+  const count = useRef(0);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+  }, [value1, value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Existe uma forma de usarmos o _useRef_ para conseguimos pegar um determinado elemento do html. Existe uma propriedade chamada _ref_ e podemos apontar para dentro de um objeto que representa uma referência. 
+Para isso, primeiramente vamos cria dois novos objetos por referência(_myInput1_ e _myInput2_) que irão receber valores iniciais _null_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+  }, [value1, value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Em seguida, vamos pegar essas referências que criamos e aplicar no atributo _ref_ dos elementos _input_. 
+Uma vez que temos o atributo _ref_ no _input_ e dentro desse _ref_ interpolado passamos um objeto que tem o _.current_, automáticamente o react vai colocar uma referência para esse _input_ dentro do atributo _current_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; // ou count.current ++;
+  }, [value1, value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Agora, vamos separar o _useEffect_ em duas partes, um _useEffect_ vai ser especifico para a alteração do _value1_ e outro especifico para o _value2_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; 
+  }, [value1])
+
+  useEffect(function() {
+    count.current += 1; 
+  }, [value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E agora, sempre que o _value1_ for alterado vamos querer que o cursor mude para o _input2_ e vise-versa. Para isso, dentro da função callback do _useEffect_ que tem como _DependencyList_ o _value1_(ou seja, quando o _value1_ for alterado a function callback é acionada e executa o seu bloco de código) vamos inserir o _myInput2.current_ e chamar o método _.focus_ para fazer essa troca do curso para o input2, o mesmo vai ser feito de forma contraria na função callback do _useEffect_ que tem como _DependencyList_ o _value2_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+    myInput2.current.focus();
+  }, [value1])
+
+  useEffect(function() {
+    count.current += 1; 
+    myInput1.current.focus();
+  }, [value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Agora, vamos criar uma função _merge_ para fazer a junção do que for sendo digitado na ordem da digitação e exibir no _span_. A function vai receber dois parâmetros string1/_s1_ e string2/_s2_, e vai retornar a conversão da string _s1_ em um _array de letras_ com o _operador spred_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const merge = function(s1, s2) {
+  return [...s1]
+}
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+    myInput2.current.focus();
+  }, [value1])
+
+  useEffect(function() {
+    count.current += 1; 
+    myInput1.current.focus();
+  }, [value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E nesse array, vamos utilizar o método _.map_. Vamos passar para o método _map_ uma função e essa função vai receber a letra que vamos chamar de elemento/_e_ e o índice/_i_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const merge = function(s1, s2) {
+  return [...s1].map(function(e, i) {
+    
+  })
+}
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+    myInput2.current.focus();
+  }, [value1])
+
+  useEffect(function() {
+    count.current += 1; 
+    myInput1.current.focus();
+  }, [value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{value1} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Inicialmente, essa função do map vai retornar o elemento _e_ concatenado com um traço _-_. Ou seja, vamos transformar as letras da string _s1_ em letras e + um "-" entre cada letra. 
+No final, tudo isso vai retornar um array, por isso, para transformar de volta para uma string vamos usar o método _.join_ e passar uma string vazia("") como parâmetro.
+E para ser exibido em tela, no _span_ vamos trocar _value1_ pela chamada da function _merge_ e passar os parâmetros para _s1_, _s2_ os _value1_ e _value2_:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const merge = function(s1, s2) {
+  return [...s1].map(function(e, i) {
+    return `${e}-`;
+  }).join("")
+}
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+    myInput2.current.focus();
+  }, [value1])
+
+  useEffect(function() {
+    count.current += 1; 
+    myInput1.current.focus();
+  }, [value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{merge(value1, value2)} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Só que, não queremos interpolar o elemento/_e_ de _s1_ com um traço/_-_ e sim com a letra da outra string(_s2_). 
+Como podemos pegar a letra da outra string(_s2_)? Podemos acessar as letras de s2 a partir do seu índice:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const merge = function(s1, s2) {
+  return [...s1].map(function(e, i) {
+    return `${e}${s2[i]}`;
+  }).join("")
+}
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+    myInput2.current.focus();
+  }, [value1])
+
+  useEffect(function() {
+    count.current += 1; 
+    myInput1.current.focus();
+  }, [value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{merge(value1, value2)} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Mas ainda falta realizarmos o tratamento para que quando for acessado um índice que não contém letra, não retorne "undefined" e sim uma string vazia:
+
+``` JavaScript
+import React, { useEffect, useRef, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const merge = function(s1, s2) {
+  return [...s1].map(function(e, i) {
+    return `${e}${s2[i] || ""}`;
+  }).join("")
+}
+
+const UseRef = (props) => {
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  const count = useRef(0);
+  const myInput1 = useRef(null);
+  const myInput2 = useRef(null);
+
+  useEffect(function() {
+    count.current += 1; //ou count.current ++;
+    myInput2.current.focus();
+  }, [value1])
+
+  useEffect(function() {
+    count.current += 1; 
+    myInput1.current.focus();
+  }, [value2])
+
+  return (
+    <div className="UseRef">
+      <PageTitle
+        title="Hook UseRef"
+        subtitle="Retorna um objeto mutável com a propriedade .current!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <div>
+          <span className="text">Valor: </span>
+          <span className="text">{merge(value1, value2)} [</span>
+          <span className="text red">{count.current}</span>
+          <span className="text">]</span>
+        </div>
+
+        <input type="text" className="input" 
+          ref={myInput1}
+          value={value1} onChange={e => setValue1(e.target.value)}/>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <input type="text" className="input" 
+          ref={myInput2}
+          value={value2} onChange={e => setValue2(e.target.value)}/>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+## useMemo
+
+Retorna um valor memorizado! Como se fosse um "cache".
+
+- Para entendermos melhor como isso funciona, vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseMemo_. Temos um componente funcional seguindo o mesmo padrão que já vimos anteriormente:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const UseMemo = (props) => {
+  return (
+    <div className="UseMemo">
+      <PageTitle
+        title="Hook UseMemo"
+        subtitle="Retorna um valor memoizado!"
+      />
+    </div>
+  )
+}
+
+export default UseMemo;
+```
+
+-  Visando uma melhor organização dos exercícios, vamos importar e referenciar o componente _SectionTitle_ e vamos passar o title via props. 
+E o primeiro objetivo vai ser criar uma _div_ com a className _center_;
+E dentro dessa div vamos criar 3 _input_ com do type _number_ com a className _input_ e o _value_ desses inputs vamos vincular ao estado das constantes _n1_, _n2_ e _n3_(vamos criar usando o useState e inicializar o valor zerado(0));
+E vamos usar o evento _onChange_ para alterar o estado dos componentes. Ele recebe como parâmetro um evento(e) e quando esse evento for chamado vamos chamar as suas respectivas funções que usamos para alterar o estado(_setN1_, _setN2_ e _serN3_), e passar a estrada do teclado(_e.target.value_), desse modo as alterações vão refletir na interface:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseMemo = (props) => {
+  const [n1, setN1] = useState(0);
+  const [n2, setN2] = useState(0);
+  const [n3, setN3] = useState(0);
+
+  return (
+    <div className="UseMemo">
+      <PageTitle
+        title="Hook UseMemo"
+        subtitle="Retorna um valor memoizado!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <input type="number" className="input" 
+          value={n1} onChange={e => setN1(parseInt(e.target.value))} /> {/*parseInt para termos certeza que irá retornar um valor interiro*/}
+        <input type="number" className="input" 
+          value={n2} onChange={e => setN2(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n3} onChange={e => setN3(parseInt(e.target.value))} />  
+      </div>
+    </div>
+  )
+}
+
+export default UseMemo;
+```
+
+- Vamos supor que criamos uma functiom soma/_sum_ que vai receber dois valores(_a_ e _b_) e essa function inicialmente vai retornar o valor de _a + b_;
+Em seguida, vamos criar o resultado/_result_, a const _result_ vai receber a função _sum_ que recebe como parâmentro os valores _n1 e n2_;
+Por fim, abaixos dos _input_ vamos criar um _span_ com a class _text_ e interpolar o valor da variável _result_(resultado da soma de n1 e n2):
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function sum(a, b) {
+  return a +b;
+}
+
+const UseMemo = (props) => {
+  const [n1, setN1] = useState(0);
+  const [n2, setN2] = useState(0);
+  const [n3, setN3] = useState(0);
+
+  const result = sum(n1, n2);
+
+  return (
+    <div className="UseMemo">
+      <PageTitle
+        title="Hook UseMemo"
+        subtitle="Retorna um valor memoizado!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <input type="number" className="input" 
+          value={n1} onChange={e => setN1(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n2} onChange={e => setN2(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n3} onChange={e => setN3(parseInt(e.target.value))} />  
+        <span className="text">{result}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseMemo;
+```
+
+- Agora, vamos supor que essa function soma/_sum_ seja um cálculo mais complexo e ela vai demorar uma certa quantidade de tempo para ser executada;
+Para simularmos isso, vamos criar uma const _future_/futuro e ela vai receber a data atual/_Date.now()_(retorna um valor em milisegundos) e vamos acrescentar _2000 milisegundos_, ou seja, 2 segundos;
+A partir de um _while_ a data atual/_Date.now()_ vai esperar enquanto ele for menor que/_<_ a data futura que armazenamos em _future_. Basicamente esse código vai ocasionar uma espera de 2s até retornar/_return_ a soma de _a + b_(poi future está 2s a frente da data atual):
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function sum(a, b) {
+  const future = Date.now() + 2000;
+  while(Date.now() < future) {} // espera 2s
+  return a +b;
+}
+
+const UseMemo = (props) => {
+  const [n1, setN1] = useState(0);
+  const [n2, setN2] = useState(0);
+  const [n3, setN3] = useState(0);
+
+  const result = sum(n1, n2);
+
+  return (
+    <div className="UseMemo">
+      <PageTitle
+        title="Hook UseMemo"
+        subtitle="Retorna um valor memoizado!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <input type="number" className="input" 
+          value={n1} onChange={e => setN1(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n2} onChange={e => setN2(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n3} onChange={e => setN3(parseInt(e.target.value))} />  
+        <span className="text">{result}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseMemo;
+```
+
+- Podemos notar que mesmo o terceiro input não tendo nada haver com a aperação ele está esperando 2s para executar. 
+Existem duas formas diferentes de resolvermos esse problema. 
+A primeira forma é usando o _useEffet_ com o _useState_, como já vimos anteriormente. Podemos mudar a constante _result_ para um estado/_state_ inicializando zerado. E usar o _useEffect_ para chamar a function callback do useEffect sempre que o _n1_ ou _n2_ forem modificados(Lista de depedências), e dentro da função vamos chamar o _setResult_ para alterar seu estado com a function _sum_, que calcula _n1 + n2_:
+
+``` JavaScript
+import React, { useEffect, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function sum(a, b) {
+  const future = Date.now() + 2000;
+  while(Date.now() < future) {} // espera 2s
+  return a +b;
+}
+
+const UseMemo = (props) => {
+  const [n1, setN1] = useState(0);
+  const [n2, setN2] = useState(0);
+  const [n3, setN3] = useState(0);
+
+  const [result, setResult] = useState(0); 
+
+  useEffect(function() {
+    setResult(sum(n1, n2));
+  }, [n1, n2])
+
+  return (
+    <div className="UseMemo">
+      <PageTitle
+        title="Hook UseMemo"
+        subtitle="Retorna um valor memoizado!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <input type="number" className="input" 
+          value={n1} onChange={e => setN1(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n2} onChange={e => setN2(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n3} onChange={e => setN3(parseInt(e.target.value))} />  
+        <span className="text">{result}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseMemo;
+```
+
+- A segunda forma de resolver esse problema é usando o _useMemo_. Basicamente o que vamos fazer é, na constante _result_ chamar o _useMemo_, passar par useMemo uma function e dentro dessa função vamos chamar a function _sum_ e realizar a soma de _n1_ e _n2_, só que essa função só vai ser chamada quando _n1_ ou _n2_ forem modificados(lista de dependência/_DEnpendencyList_): 
+
+``` JavaScript
+import React, { useEffect, useMemo, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+function sum(a, b) {
+  const future = Date.now() + 2000;
+  while(Date.now() < future) {} // espera 2s
+  return a +b;
+}
+
+const UseMemo = (props) => {
+  const [n1, setN1] = useState(0);
+  const [n2, setN2] = useState(0);
+  const [n3, setN3] = useState(0);
+
+  // const result = useMemo(function() {
+  //   sum(n1, n2)
+  // }, [n1, n2])
+  // Simplificando com arrow function...
+  const result = useMemo(() => sum(n1, n2), [n1, n2])
+
+  return (
+    <div className="UseMemo">
+      <PageTitle
+        title="Hook UseMemo"
+        subtitle="Retorna um valor memoizado!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <input type="number" className="input" 
+          value={n1} onChange={e => setN1(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n2} onChange={e => setN2(parseInt(e.target.value))} />
+        <input type="number" className="input" 
+          value={n3} onChange={e => setN3(parseInt(e.target.value))} />  
+        <span className="text">{result}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseMemo;
+```
+
+## useCallback
+
+Retorna uma função memoizada! Como se fosse um "cache".
+Tem um uso mais específico.
+
+- Para entendermos melhor como isso funciona, vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseCallback_. Temos um componente funcional seguindo o mesmo padrão que já vimos anteriormente:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const UseCallback = (props) => {
+  return (
+    <div className="UseCallback">
+      <PageTitle
+        title="Hook UseCallback"
+        subtitle="Retorna uma função memoizada!"
+      />
+    </div>
+  )
+}
+
+export default UseCallback;
+```
+
+- E vamos criar um contador bem simples.
+Primeiramente, vamos criar um array com os valores _count_ e _setCount_ que recebe a função _useState_ e vamos passar como parâmetro para essa função o _valor inicial_ que _count_ vai receber e a função _setCount_ vai poder alterar. Basicamente esse é o "Olá mundo!" do useState, que é um contador, portanto, o valor inicial vai ser _0_;
+Visando uma melhor organização dos exercícios, vamos importar e referenciar o componente _SectionTitle_ e vamos passar o title via props;
+Para visualizarmos o valor da _variável count_, primeiramente vamos criar uma _div_ com o className _center_(para aplicar as propriedades CSS já criadas no arquivo index.css);
+Em seguida, dentro da _div_ vamos criar um elemento _span_ com o className _text_ e dentro do _span_ vamos interpolar o valor para apontar _count_;
+Agora vamos criar os botões para incrementar +6, +12 e +18. Vamos criar três elementos _button_ com o className _btn_;
+Podemos notar que os ficaram um embaixo do outro, isso ocorre porque a classe _center_ que está aplicada na div, tem o _display flex_ e o _flex-direction column_. Para mudar esse comportamento, para o alinhamento em _row_ vamos envolver os botões com uma _div_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseCallback = (props) => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div className="UseCallback">
+      <PageTitle
+        title="Hook UseCallback"
+        subtitle="Retorna uma função memoizada!"
+      />
+
+      <SectionTitle title="#Exercício"/>
+      <div className="center">
+        <span className="text">{count}</span>
+        
+        <div>
+          <buttom className="btn">+6</buttom>
+          <buttom className="btn">+12</buttom>
+          <buttom className="btn">+18</buttom>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default UseCallback;
+```
 
 
+- Agora, vamos criar uma function _inc_ ela irá receber um parâmetro _delta_ e irá chamar a função _setCount_ (que altera o valor de count) e vai pegar o valor atual _count_ e soma ao valor _delta_ recebido;
+Nos _button_ vamos adicionar o evento _onClick_ e criar uma arrow function, para quando essa função for chamada ela irá chamar a função _inc_ e passar o valor para _delta_: 
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseCallback = (props) => {
+  const [count, setCount] = useState(0);
+
+  function inc(delta) {
+    setCount(count + delta);
+  }
+
+  return (
+    <div className="UseCallback">
+      <PageTitle
+        title="Hook UseCallback"
+        subtitle="Retorna uma função memoizada!"
+      />
+
+      <SectionTitle title="#Exercício"/>
+      <div className="center">
+        <span className="text">{count}</span>
+        <br />
+
+        <div>
+          <buttom className="btn" onClick={() => inc(6)}>+6</buttom>
+          <buttom className="btn" onClick={() => inc(12)}>+12</buttom>
+          <buttom className="btn" onClick={() => inc(18)}>+18</buttom>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default UseCallback;
+```
+
+- Vamos supor que queiramos pegar esse treço de código onde estão os _button_ e colocar em outro componente chamado _UseCallbackButtons_. E nele vamos receber a função _inc_ através de props(já que ela vem do componente pai - UseCallback):
+
+``` JavaScript
+import React from "react";
+
+const UseCallbackButtons = (props) => {
+  return (
+    <div>
+      <buttom className="btn" onClick={() => props.inc(6)}>+6</buttom>
+      <buttom className="btn" onClick={() => props.inc(12)}>+12</buttom>
+      <buttom className="btn" onClick={() => props.inc(18)}>+18</buttom>
+    </div>
+  )
+}
+
+export default UseCallbackButtons;
+```
+
+- E no componente pai _UseCallback_ vamos importar e referênciar esse componente _UseCallbackButtons_. Em seguida, vamos passar a função _inc_ dentro da propriedade _inc_(que temos dentro do componente filho):
+
+``` JavaScript
+import React, { useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+import UseCallbackButtons from "../examples/UseCallbackButtons"
+
+const UseCallback = (props) => {
+  const [count, setCount] = useState(0);
+
+  function inc(delta) {
+    setCount(count + delta);
+  }
+
+  return (
+    <div className="UseCallback">
+      <PageTitle
+        title="Hook UseCallback"
+        subtitle="Retorna uma função memoizada!"
+      />
+
+      <SectionTitle title="#Exercício"/>
+      <div className="center">
+        <span className="text">{count}</span>
+        <br />
+
+        <UseCallbackButtons inc={inc}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseCallback;
+```
+
+- Existe a possibilidade dentro do React através de um cara chamado _React.memo_ de criar um componente cacheado. Por exemplo, se usarmos o _React.memo_ no nosso componente filho _UseCallbackButtons_ ele só vai renderizar esse componente se as _props_ forem alteradas(nesse caso aqui, seja passada uma nova função):
+
+``` JavaScript
+import React from "react";
+
+const UseCallbackButtons = (props) => {
+  console.log("render...")
+
+  return (
+    <div>
+      <buttom className="btn" onClick={() => props.inc(6)}>+6</buttom>
+      <buttom className="btn" onClick={() => props.inc(12)}>+12</buttom>
+      <buttom className="btn" onClick={() => props.inc(18)}>+18</buttom>
+    </div>
+  )
+}
+
+export default React.memo(UseCallbackButtons);
+```
+
+Mas se olharmos no _console.log_ quantas vezes esse componente é renderizado, podemos notar que sempre que clicarmos nos buttons de incrementar, esse componente é renderizado novamente. Isso ocorre porque sempre estamos passando via _props_ uma função diferente... como assim? Estamos passando uma função diferente, pois sempre que o componente é renderizado novamente a função _inc_ é criada novamente, e é aqui que entra o hook _useCallback_.
+Basicamente, nesse hook _useCallback_ vamos passar uma function que é examente essa função de incremento/_inc_ só que precisamos garantir quem é a dependência dessa função, o que precisa mudar para que essa função seja chamada... uma vez que temos o _count_ como dependência e ele fica modificando o tempo todo, podemos chamar a função _setCount_ e passar para ela uma função callback e essa função vai receber mais atual de _count_ o _curr_ e ao ínves de usarmos o proprio _count_ como dependência podemos usar o _setCount_, tendo em vista que ele não muda, portanto componente será renderizado uma única vez e a função será criada uma única vez:
+
+``` JavaScript
+import React, { useCallback, useState } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+import UseCallbackButtons from "../examples/UseCallbackButtons"
+
+const UseCallback = (props) => {
+  const [count, setCount] = useState(0);
+
+  const inc = useCallback(function (delta) {
+    setCount(curr => curr + delta)
+  }, [setCount])
+
+  return (
+    <div className="UseCallback">
+      <PageTitle
+        title="Hook UseCallback"
+        subtitle="Retorna uma função memoizada!"
+      />
+
+      <SectionTitle title="#Exercício"/>
+      <div className="center">
+        <span className="text">{count}</span>
+        <br />
+
+        <UseCallbackButtons inc={inc}/>
+      </div>
+    </div>
+  )
+}
+
+export default UseCallback;
+```
+
+## Entendendo Context API
+
+Imagine a seguinte situação,  que você tem a necessidade de trocar informação entre esse um componente e outro que estão bem distânte na árvore de componentes... Como é que a gente poderia fazer para haver comunicação entre esses dois componentes? Existe um processo de comunicação direto e um processo de comunicação direta... mas essa informação vai ser passada por diversos componentes até que chegue nos componentes que queremos, sem que haja necessidade. 
+Podemos estabeler a comunicação entre esses dois componentes se a gente criar por exemplo um,a estrutura para armazenar informação, que esteja fora envolvendo toda a aplicação. Então eventualmente vamos ter um componente antes do componente raiz. E dentro desse componente vamos ter um determinado contexto, ou seja dados para que consigamos compartilhar entre os componentes. Esse contexto de alguma forma for acessível dentro desse componente. 
+E essa ideia dE termos um contexto(digamos assim), temos um conjunto de informações e essas informações estarem de uma forma mais fácil acessível para cada elemento que precisar trabalhar com ela, é exatamente de ter uma API pra trabalhar com esses dados de contexto, termos algo externo a árvore de componente e conseguimos ler informações desse contexte e poder alterar.
+Não está diretamente relacionado com os hooks, mas é usado juntamente com os hook.
+
+## useContext
+
+Aceita um objeto de contexto e retorna o valor atual do contexto!
+
+- Para entendermos melhor, em src vamos criar uma pasta chamada _data_. Nela iremos inserir os dados do contexto, e esses dados tem que estar fora dos componentes para depois eles sejam passados a partir de um provedor e assim conseguiremos acessar esses dados em qualquer componente da aplicação. 
+Dentro dessa pasta _data_ vamos criar por enquanto um arquivo chamado _DataContext.js_. Depois iremos criar um componente que dentro dele iremos colocar um contexto, por hora, vamos criar esse contexto "solto".
+
+- Dentro do arquivo _DataContext_ vamos importar o _React_ e criar uma constante _data_ que vai receber um objeto com os dados, também iremos exportar/_export_ essa constante:
+
+``` JavaScript
+import React from "react";
+
+export const data = {
+  number: 123,
+  text: "Context API..."
+}
+```
+
+- Em seguida, vamos criar uma constante chamada _DataContext_ e criar um contexto a partir de _React.creatContext_ e vamos passar os dados/_data_ para esse contexto inicial, e depois iremos exportar por padrão/_export default_ essa constante:
+
+``` JavaScript
+import React from "react";
+
+export const data = {
+  number: 123,
+  text: "Context API..."
+}
+
+const DataContext = React.createContext(data);
+
+export default DataContext;
+```
+
+- E agora, como fazemos para usar esse _DataContext_? Vamos usar esse contexto em um ponto que conseguiremos usar em toda nossa aplicação, ou seja, no componete raiz da nossa aplicação, que nesse caso é o componente _App_.
+Onde estamos usando esse componente _App_? Dentro do arquivo _index.js_. Dentro dele temos o componente _App_ como sendo o primeiro componente carregado na nossa aplicação, como podemos ver abaixo:
+
+``` JavaScript
+import "./index.css";
+import ReactDOM from "react-dom";
+import React from "react";
+
+import App from "./views/App";
+
+ReactDOM.render(
+  <App />,
+  document.getElementById("root")
+)
+```
+
+- A partir do momento que esse componente for carregado, termos todos os outros componentes sendo carregados também. Podemos colocar o _DataContext_ tanto aqui dentro de _index.js_ quando dentro de próprio _App.jsx_. Nesse caso, colocaremos dentro do _index.js_.
+Primeiramente, vamos importar o _DataContext_ e referenciar esse componente a partir de um provedor(_DataContext.provider_) e envolver toda nossa aplicação com esse context, ou seja, envolver o componente _App_ com o componente _DataContext.provider_:
+
+``` JavaScript
+import "./index.css";
+import ReactDOM from "react-dom";
+import React from "react";
+
+import App from "./views/App";
+import DataContext from "./data/DataContext";
+
+ReactDOM.render(
+  <DataContext.Provider>
+    <App />
+  </DataContext.Provider>,
+  document.getElementById("root")
+)
+```
+
+- Existe um parâmetro chamaDO _value_ e essa parâmetro precisa ser inicializado com os dados que queremos passar para todos os componentes, que nesse caso está dentro do arquivo _DataContext.js_ na constante chamada _data_.
+Vamos importar _data_ e passar ele como atributo para _value_:
+
+``` JavaScript
+import "./index.css";
+import ReactDOM from "react-dom";
+import React from "react";
+
+import App from "./views/App";
+import DataContext, { data } from "./data/DataContext"; // importando { data } assim, pois exportamos ele sem usar o default
+
+
+ReactDOM.render(
+  <DataContext.Provider value={data}>
+    <App />
+  </DataContext.Provider>,
+  document.getElementById("root")
+)
+```
+
+- Como conseguimos acessar os dados que foram passados a partir do context API? Vamos fazer o seguinte, vamos no diretório src/views/examples e no arquivo do hook _UseContext_ vamos usar esse contexto. 
+Primeiramente, vamos importar o objeto de contexto/_DataContext_ e vamos passar ele como parâmetro para o _useContext_, sso significa que estamos recebendo o contexto atual. Vamos armazenar esse contexto na const _context_:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- O que temos dentro do contexto/_context_? Passamos para a aplicação o _value_ e dentro dele os dados/_data_, dentro desse objeto _data_ temos um _number_ e um _texto_. Então o nosso contexto é um objeto que tem número e texto. E como podemos acessar eles? Através de _context.nome-propriedade_. 
+Para visualizarmos isso, vamos criar uma _div_ com a class _center_ e dentro dela um _span_ com a class _text_, nele vamos interpolar o valor de _context.text_:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.text}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- E como poderiamos modificar esse valor? Primeiramente, é necessário cautela, pois vai ser alterado o contexto inteiro. 
+Vamos fazer algumas alterações antes de tudo, vamos remover o _DataContext.Provider_ do _index.js_ e passar para dentro do _App.jsx_, assim poderemos criar estado/_state_ e passar eventualmente uma function que vai aterar o estado. 
+Dessa forma o _App.js_ vai voltar a ficar assim:
+
+``` JavaScript
+import "./index.css";
+import ReactDOM from "react-dom";
+import React from "react";
+
+import App from "./views/App";
+
+ReactDOM.render(
+  <App />,
+  document.getElementById("root")
+)
+```
+
+- E o componente _App_ ficará assim:
+
+``` JavaScript
+import "./App.css";
+import React from "react";
+import { BrowserRouter as Router } from  "react-router-dom";
+
+import Menu from "../components/layout/Menu";
+import Content from "../components/layout/Content";
+
+import DataContext, { data } from "../data/DataContext";
+
+const App = props => {
+  return (
+    <DataContext.Provider value={data}>
+      <div className="App">
+        <Router>
+          <Menu />
+          <Content />
+        </Router>
+      </div>
+    </DataContext.Provider>
+  )
+}
+
+export default App;
+```
+
+- Uma coisa que podemos fazer ao invés de passarmos diretamente o _data_ para o _value_, podemos passar o _data_ e mais outro valor por exemplo. 
+Então vamos criar o estado _state_ e _setState_ e valor inicializar o valor de _state_ usando o _useState_ passando o _data_, ou seja, vamos inicializar um estado dentro do componente _App_ a partir do objeto _data_ que criamos dentro de _DataContext.js_:
+
+``` JavaScript
+import "./App.css";
+import React, { useState } from "react";
+import { BrowserRouter as Router } from  "react-router-dom";
+
+import Menu from "../components/layout/Menu";
+import Content from "../components/layout/Content";
+
+import DataContext, { data } from "../data/DataContext";
+
+const App = props => {
+  const [state, setState] = useState(data);
+
+  return (
+    <DataContext.Provider value={data}>
+      <div className="App">
+        <Router>
+          <Menu />
+          <Content />
+        </Router>
+      </div>
+    </DataContext.Provider>
+  )
+}
+
+export default App;
+```
+
+- Diferente do que fizemos anteriormente, onde inicializamos o estado com um número ou uma string, estamos inicializando com um objeto. Cuidado! Pois se tivermos um objeto dentro de _state_ e chamarmos a função _setState_ e passarmos um número, ele vai substituir o objeto pelo número. Entao, se temos um objeto no estado e queremos que continue lá, temos que setar um objeto no estado.
+Então dentro de _value_ vamos passar um objeto {} que vai contém _state_ e _setState_. Observação, o primeiro par de chaves{} é o que o react usa para interpolar um valor e o par de chaves{} de dentro são para delimitar um objeto javascript, é como se tivéssemos escrevido _{state: state, setState: setState}_, basicamente estamos criando um objeto que vai "representar o estado", só que como estamos usando os mesmos nomes da chave e valor, podemos simplificar assim _{state, setState}_:
+
+``` JavaScript
+import "./App.css";
+import React, { useState } from "react";
+import { BrowserRouter as Router } from  "react-router-dom";
+
+import Menu from "../components/layout/Menu";
+import Content from "../components/layout/Content";
+
+import DataContext, { data } from "../data/DataContext";
+
+const App = props => {
+  const [state, setState] = useState(data);
+
+  return (
+    <DataContext.Provider value={{state, setState}}> {/* OU {state: state, setState: setState} */}
+      <div className="App">
+        <Router>
+          <Menu />
+          <Content />
+        </Router>
+      </div>
+    </DataContext.Provider>
+  )
+}
+
+export default App;
+```
+
+- Podemos notar que mudou o valor do nosso contexto, agora o contexto tem um objeto com dois atributos... se formos no navegador, vamos ver que o app não está mais exibindo o valor de _text_, pois ele não está encontrando esse valor.
+Para resolver isso, vamos voltar no componente _UseContext_ e vamos alterar o acesso ao valor _text_, pois uma vez que temos o _context_ vamos acessar o _text_ de dentro do atributo _state_ já que agora é dentro _state_ que estão os dados do nosso contexto, ficando assim _context.state.text_:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- Como agora temos _context.setState_, podemos usar o _setState_ para alterar os dados. Por exemplo, vamos criar uma function para alterar o _number_, ela vai se chamar _addNumber_(a qual irá incrementar ou decrementar 1 em number):
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber() {
+    
+  }
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- Essa função vai receber um determinado valor/_delta_ e irá chamar o _context.setState_. Lembrando que, ele vai setar um objeto e queremos que ele continue pegando o _context.state_ e usando cada um dos atributo, para isso vamos usar o operador spred/_..._ e só alterar o valor do atributo _number_, a partir do _delta_ que foi passado como parâmetro:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+      </div>
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- Para visualizarmos essa alteração, vamos criar uma _div_ e dentro dela dois _button_ com a class _btn_ para incrementar +1 e decrementar -1:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+
+        <div>
+          <button className="btn">-1</button>
+          <button className="btn">+1</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- Agora, vamos adicionar o evento _onClick_ e criar uma arrow function, para quando essa função for chamada(clicarem no botão) ela irá chamar a função _addNumber_ e enviar o parâmetro _delta_ que foi passado para ela, que vai pegar o number atual do estado(_context.state.number_) -/+ 1(_delta_):
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+
+        <div>
+          <button className="btn" onClick={() => addNumber(-1)}>-1</button>
+          <button className="btn" onClick={() => addNumber(1)}>+1</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default UseContext;
+```
