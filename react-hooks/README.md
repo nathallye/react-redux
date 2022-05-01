@@ -2985,3 +2985,670 @@ const UseContext = (props) => {
 
 export default UseContext;
 ```
+
+## useContext
+
+Vamos repetir tudo que vimos anteriormente, mas de uma forma mais organizada/encapsulada. Na primeira solução, criamos um _Provider_ e passamos para a aplicação inteira o estado/_state_ e a função que vai alterar o estado inteiro da aplicação(_setState_)... Isso é uma grande responsabilidade para compartilhar com tada a aplicação. Essa forma anterior tem baixo nível de encapsulamento. 
+
+- Primeiramente no diretório src/data vamos criar um arquivo chamado _Store.jsx_, esse componente vai ser um componente "não visual", ele vai conter um estado interno que vai controlar o estado da aplicação. Futuramente, podemos usar o _useReducer_ para ter mais flexibilidade no gerenciamento do estado da aplicação.
+
+- Nesse arquivo _Store.jsx_, vamos criar um componente funcional simples:
+
+``` JavaScript
+import React from "react";
+
+const Store = props => {
+  return (
+    <div></div>
+  )
+}
+
+export default Store;
+```
+
+- Vamos usar esse componente _Store_ para envolver toda a aplicação(inclusive o Provider), esse componente será responsável por criar o _Provider_ tudo certinho. Em _App.jsx_ importar _Store_ e envolver toda a aplicação com esse componente:
+
+``` JavaScript
+import "./App.css";
+import React, { useState } from "react";
+import { BrowserRouter as Router } from  "react-router-dom";
+
+import Menu from "../components/layout/Menu";
+import Content from "../components/layout/Content";
+
+import DataContext, { data } from "../data/DataContext";
+import Store from "../data/Store";
+
+const App = props => {
+  const [state, setState] = useState(data);
+
+  return (
+    <Store>
+      <DataContext.Provider value={{state, setState}}> 
+        <div className="App">
+          <Router>
+            <Menu />
+            <Content />
+          </Router>
+        </div>
+      </DataContext.Provider>
+    </Store>
+  )
+}
+
+export default App;
+```
+
+- Só que podemos notar que a nossa aplicação não está sendo renderizada, então como fazermos para mostrar na tela a aplicação? Indo no componente _Store_ e colocando _{props.children}_ dentro da _div_ para mostrar os elementos filhos desse componente:
+
+``` JavaScript
+import React from "react";
+
+const Store = props => {
+  return (
+    <div>
+      {props.children}
+    </div>
+  )
+}
+
+export default Store;
+```
+
+- Agora, vamos criar os dados e o contexto. 
+Para criar os dados, vamos criar uma const chamada _initialState_(fora do componente), ou seja, estado inicial da aplicação. Ela vai receber um objeto que vai conter _number_ e _text_;
+Em seguida, vamos criar o contexto a partir de _React.creatContext_ usando o estado inicial(_initialState_)... e vamos chamar esse contexto de _AppContext_, imaginando que toda a aplicação vai ter um único estado, e também vamos exportar esse contexto _AppContext_ para que o contexto fique acessível em toda a aplicação:
+
+``` JavaScript
+import React from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  return (
+    <div>
+      {props.children}
+    </div>
+  )
+}
+
+export default Store;
+```
+
+- Com o _AppContext_ podemos criar o _AppContext.Provider_ e envolver toda a aplicação dentro do _Provider_(dispensando a _div_):
+
+``` JavaScript
+import React from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  return (
+    <AppContext.Provider>
+      {props.children}
+    </AppContext.Provider>
+  )
+}
+
+export default Store;
+```
+
+- Já que temos o estado inicial/_initialState_, vamos criar uma const(dentro do componente) que vai ser um array de duas posições, a primeira será _state_ que vai receber através do _useState_ o seu valor inicial(que nesse caso será o estado inicial/_inicialState_), e a segunda posição vai ser a função _setState_ que vai poder alterar o valor de _state_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  const [state, setState] = useState(initialState);
+
+  return (
+    <AppContext.Provider>
+      {props.children}
+    </AppContext.Provider>
+  )
+}
+
+export default Store;
+```
+
+- Não vamos passar na propriedade _value_ do _Provider_ diretamente o _{state, setState}_, vamos passar as funções prontas, uma para alterar o _number_ e outra para alterar o _text_.
+Primeiramente, passar para o _value_ um objeto que vai conter um _number_ que vai pegar do _state_ o valor do atributo _number_ que esta nele e um _text_ que vai pegar do _state_ o valor do o atributo _text_ dele:
+
+``` JavaScript
+import React, { useState } from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  const [state, setState] = useState(initialState);
+
+  return (
+    <AppContext.Provider value={{
+      number: state.number,
+      text: state.text
+    }}>
+      {props.children}
+    </AppContext.Provider>
+  )
+}
+
+export default Store;
+```
+
+- Agora, vamos criar uma função que vai se chamar _updateState_ e essa função vai receber dois parâmetros, a chave/_key_ ou seja o _nome do atributo_ e o novo valor/_value_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  const [state, setState] = useState(initialState);
+
+  function updateState(key, value) {
+    
+  }
+
+  return (
+    <AppContext.Provider value={{
+      number: state.number,
+      text: state.text
+    }}>
+      {props.children}
+    </AppContext.Provider>
+  )
+}
+
+export default Store;
+```
+
+- O que vamos fazer para alterar o _state_ dentro dessa função _updateState_? Vamos chamar o _setState_, lembrando que ele é um objeto, então vamos ter que criar um objeto {}. 
+Como fazemos para replicar o estado atual? Basta pegar o estado atual/_state_ e usar o operador spred/_..._, assim temos todo o objeto que representa o _state_ clonado, em seguida podemos alterar apenas o atributo que foi passado via params(_key_ e _value_) para essa função:
+
+``` JavaScript
+import React, { useState } from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  const [state, setState] = useState(initialState);
+
+  function updateState(key, value) {
+    setState({
+      ...state,
+      [key]: value
+    })
+  }
+
+  return (
+    <AppContext.Provider value={{
+      number: state.number,
+      text: state.text
+    }}>
+      {props.children}
+    </AppContext.Provider>
+  )
+}
+
+export default Store;
+```
+
+- E no _value_ do _Provider_ ao invés de passarmos diretamente a função _updateState_, vamos criar uma função(arrow) _setNumber_ e essa função vai receber um novo número/_n_ e irá chamar a função _updateState_ passando como atributo para _key_ a chave _number_ e para o _value_ o _n_ que recebemos na função _setNumber_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  const [state, setState] = useState(initialState);
+
+  function updateState(key, value) {
+    setState({
+      ...state,
+      [key]: value
+    })
+  }
+
+  return (
+    <AppContext.Provider value={{
+      number: state.number,
+      text: state.text,
+      setNumber: n => updateState("number", n)
+    }}>
+      {props.children}
+    </AppContext.Provider>
+  )
+}
+
+export default Store;
+```
+
+- E vamos replicar essa ação para a função _setText_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+const initialState = {
+  number: 1234,
+  text: 'Context API + Hooks'
+}
+
+export const AppContext = React.createContext(initialState);
+
+const Store = props => {
+  const [state, setState] = useState(initialState);
+
+  function updateState(key, value) {
+    setState({
+      ...state,
+      [key]: value
+    })
+  }
+
+  return (
+    <AppContext.Provider value={{
+      number: state.number,
+      text: state.text,
+      setNumber: n => updateState("number", n),
+      setText: t => updateState("text", t)
+    }}>
+      {props.children}
+    </AppContext.Provider>
+  )
+}
+
+export default Store;
+```
+
+- Então, esse é o objeto que estamos compartilhando a partir do _Provider_ através do _value_, encapsulado dentro do componente _Store_, então como a aplicação/_componente App_ já está envolvida pelo _Store_ já conseguimos usar esse estado. 
+Dentro do componente _useContext_ vamos usar esse contexto... antes disso, vamos criar uma _div_ com a class _center_:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+
+        <div>
+          <button className="btn" onClick={() => addNumber(-1)}>-1</button>
+          <button className="btn" onClick={() => addNumber(1)}>+1</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #02" />
+      <div className="center">
+        
+      </div>
+
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- E dentro dessa _div_ vamos acessar esse estado.
+Vamos criar uma constante e vamos acessar primeiramente o _number_ e o _setNumber_ e usar o _useContext_ para pegar esses valores de dentro do contexto _AppContext_(valores passados pela propriedade _value_ do _Provider_):
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+import { AppContext } from "../../data/Store";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext); 
+  // podemos também desconstruir esse objeto DataContext, acessando state e setState, assim...
+  // const { state, setState } = useContext(DataContext); 
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  const { number, setNumber } = useContext(AppContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        {/*Podendo acessar diretamente, assim...*/}
+        {/*<span className="text">{state.text}</span>*/}
+        <span className="text">{context.state.number}</span>
+        {/*<span className="text">{state.number}</span>*/}
+        <div>
+          <button className="btn" onClick={() => addNumber(-1)}>-1</button>
+          <button className="btn" onClick={() => addNumber(1)}>+1</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #02" />
+      <div className="center">
+        
+      </div>
+
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- E vamos interpolar esse valor de _number_ dentro de um _span_ com a class _text_:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+import { AppContext } from "../../data/Store";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  const { number, setNumber } = useContext(AppContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+
+        <div>
+          <button className="btn" onClick={() => addNumber(-1)}>-1</button>
+          <button className="btn" onClick={() => addNumber(1)}>+1</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #02" />
+      <div className="center">
+        <span className="text">{number}</span>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- E para alterar _number_, vamos criar uma _div_ e dentro dela um _button_ com a class _btn_ para decrementar -1. 
+Esse _button_ vai ter um evento _onClick_ e quando clicarmos no botão ele vai chamar através de uma arrow function o _setNumber_ que vai enviar para o novo valor/_value_ o _number - 1_: 
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+import { AppContext } from "../../data/Store";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  const { number, setNumber } = useContext(AppContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+
+        <div>
+          <button className="btn" onClick={() => addNumber(-1)}>-1</button>
+          <button className="btn" onClick={() => addNumber(1)}>+1</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #02" />
+      <div className="center">
+        <span className="text">{number}</span>
+        <div>
+          <button className="btn" 
+          onClick={() => setNumber(number - 1)}>
+          -1
+          </button>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- O mesmo vamos fazer para o _button_ que irá incrementar +1 ao _number_:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+import { AppContext } from "../../data/Store";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  const { number, setNumber } = useContext(AppContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+
+        <div>
+          <button className="btn" onClick={() => addNumber(-1)}>-1</button>
+          <button className="btn" onClick={() => addNumber(1)}>+1</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #02" />
+      <div className="center">
+        <span className="text">{number}</span>
+        <div>
+          <button className="btn" 
+          onClick={() => setNumber(number - 1)}>
+          -1
+          </button>
+          <button className="btn" 
+          onClick={() => setNumber(number + 1)}>
+          +1
+          </button>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseContext;
+```
+
+- Podemos também importar o _text_ e exibir ele em tela:
+
+``` JavaScript
+import React, { useContext } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import DataContext from "../../data/DataContext";
+import { AppContext } from "../../data/Store";
+
+const UseContext = (props) => {
+
+  const context = useContext(DataContext);
+
+  function addNumber(delta) {
+    context.setState({
+      ...context.state,
+      number: context.state.number + delta
+    })
+  }
+
+  const { number, text, setNumber } = useContext(AppContext);
+
+  return (
+    <div className="UseContext">
+      <PageTitle
+        title="Hook UseContext"
+        subtitle="Aceita um objeto de contexto e retorna o valor atual do contexto!"
+      />
+
+      <SectionTitle title="Exercício #01" />
+      <div className="center">
+        <span className="text">{context.state.text}</span>
+        <span className="text">{context.state.number}</span>
+
+        <div>
+          <button className="btn" onClick={() => addNumber(-1)}>-1</button>
+          <button className="btn" onClick={() => addNumber(1)}>+1</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #02" />
+      <div className="center">
+        <span className="text">{text}</span>
+        <span className="text">{number}</span>
+        <div>
+          <button className="btn" 
+          onClick={() => setNumber(number - 1)}>
+          -1
+          </button>
+          <button className="btn" 
+          onClick={() => setNumber(number + 1)}>
+          +1
+          </button>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseContext;
+```
