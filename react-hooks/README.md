@@ -3652,3 +3652,530 @@ const UseContext = (props) => {
 
 export default UseContext;
 ```
+
+## useReducer
+
+Uma outra forma de ter estado em componentes funcionais!
+
+- Para entendermos melhor como isso funciona, vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseReducer_. Temos um componente funcional seguindo o mesmo padrão que já vimos anteriormente:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const UseReducer = (props) => {
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Primeiramente, vamos criar um estado inicial/_initialState_... esquecendo um pouco context API, esse exemplo vai ser sem nenhum relação com a parte de contexto, voltaremos a trabalhar dentro de um único componente.
+O _initialState_ vai ter alguns atributos... carrinho de compras/_cart_, produtos em destaque/_product_, usuário/_user_ e _number_, o foco por hora vai ser no _number_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  // foco...
+  number: 0
+}
+
+const UseReducer = (props) => {
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Em seguida, vamos criar um function chamada _reducer_ e essa função vai receber dois parâmetros, o primeiro parâmetro é o estado atual/_state_(ultima versão disponível do estado) e o segunda vai ser uma ação/_action_, basicamente a partir de uma ação/_action_ gerada vamos saber como vai ser alterado o estado da aplicação/_state_ para a nova versão, e toda _action_ tem um tipo/nome e a partir desse tipo da ação/_action_ vamos saber como vamos alterar o estado/_state_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+
+}
+
+const UseReducer = (props) => {
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Nessa função, vamos inserir um _switch_ que vai ser "encima" de _action.type_, toda ação/_action_ tem ao menos o atributo tipo/_type_, que é ele quem vai dizer o que vai ser feito nessa _action_.
+Vamos supor que teremos um _case_ que o tipo da ação/_action.type_ seja adicionar 2 ao number/_add2ToNumber_, se acontecer essa ação/se cair nesse case, vamos retornar/_return_ um novo objeto/_{}_ que vai representar o estado, vamos clonar o estado atual/_state_ com o operador spreed e em seguida vamos criar um novo atributo _number_ que vai ser exatamente o _state.number + 2_ já que essa ação o objetivo dela é adicionar/somar 2 ao number:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+  }
+}
+
+const UseReducer = (props) => {
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- E também vamos colocar o caso _default_, caso seja passado uma ação que não foi mapeada, vai ser retornado o estado/_state_ atual:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Afinal, qual o objetivo da função _reducer_? Pegar o estado atual, que é o objeto _initialState_ e para cada ação o estado vai evoluir alterando algum atributo, conforme as ações mapeadas.
+Agora, como vamos criar o _useReducer_? Primeiro, vamos criar o estado/_state_ e uma função _exec_ e vamos chamar o _useReducer_ e passar como parâmetro a function _reducer_ e o estado inicial/_initialState_... precisamos passar para o _useReducer_ a função que vai evoluir o estado e o estado inicial/_inicialState_:
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  const [state, exec] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Para entendermos como funciona a mudança de estado, vamos exibir o valor de _number_ do objeto _state_(pois o estado/_state_ foi inicializado com o que tem dentro do objeto _initialState_). 
+Primeiramente, vamos criar uma _div_ com a class _center_ e dentro dela um _span_ e nele vamos interpolar o valor de _state.number_:
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  const [state, exec] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <span className="text">{state.number}</span>
+      </div>
+    
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Temos uma função chamada _exec_, como vamos disparar uma ação para chamar a função _reducer_ e automáticamente ele evoluir o estado de acordo com o _type_ da _action_? Primeiramente, vamos criar uma _div_, e dentro dela vamos inserir um _button_ com a class _btn_ para incrementar +2 no atributo _number_ de _state_. Nesse _button_ vamos inserir o evento _onClick_ e nele vamos passar uma arrow function que vai chamar a função _exec_ e nela vamos passar como parâmetro um objeto com o atributo _type_(pois _action_ é um objeto que contém o atributo _type_) e esse _type_ vai ser a ação que criamos para adicionar 2 ao number _add2ToNumber_. 
+O que está acontecendo aqui? No momento que o usuário clicar no botão/_button_ ele vai disparar/_exec_ uma ação/_action_. Só _exec_ não está chamando diretamente a função _reducer_, o _exec_ recebe o objeto _action_, vai executar essa ação que internamente vai chamar a função _reducer_ e essa função vai retornar a nova versão do estado/_state_ especificamente nesse atributo _number_:
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  const [state, exec] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <span className="text">{state.number}</span>
+        <div>
+          <button className="btn" 
+            onClick={() => exec({ type: "add2ToNumber" })}>+2</button>
+        </div>
+      </div>
+    
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Vamos supor que queremos criar um novo case chamado _login_... login vai retornar o estado atual e alterar somente o atributo _user_ e nele vamos adicionar um objeto com os dados do usuário:
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    case "login":
+      return { ...state, user: { name: "Nathallye", email: "nathallyet@gmail.com" } }
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  const [state, exec] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        <span className="text">{state.number}</span>
+        <div>
+          <button className="btn" 
+            onClick={() => exec({ type: "add2ToNumber" })}>+2</button>
+        </div>
+      </div>
+    
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Assim, sempre que tiver uma _action_ chamada _login_ ele vai lá e adiciona um usuário para o atributo _user_ que inicialmente começa nulo/_null_.
+Então, qual o próximo passo? Vamos inserir um lógica com operador ternário, se _state.user_ estiver setado, ou seja, diferente de nulo/_null_ ele vai mostrar em tela um _span_ com a class _text_ interpolado com o _name_ que está dentro desse objeto _state_ no atributo _user_(_state.user.name_)... caso contrário, vai ser exibido em tela um _span_ com o texto "Sem usuário":
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    case "login":
+      return { ...state, user: { name: "Nathallye", email: "nathallyet@gmail.com" } }
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  const [state, exec] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        {state.user ? 
+          <span className="text">{state.user.name}</span>
+          : <span className="text">Sem usuário</span> 
+        }
+        
+        <span className="text">{state.number}</span>
+        <div>
+          <button className="btn" 
+            onClick={() => exec({ type: "add2ToNumber" })}>+2</button>
+        </div>
+      </div>
+    
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Antes de continuarmos, vamos mudar o nome da função _exec_ para _dispatch_ que é o termo usado normalmente.
+E para executar isso, vamos criar um novo _button_ com a class _btn_ chamado _login_ e a partir do evento _onClick_ vamos chamar a função _dispatch_ que vai receber uma _action_ com o _type: "login"_:
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    case "login":
+      return { ...state, user: { name: "Nathallye", email: "nathallyet@gmail.com" } }
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        {state.user ? 
+          <span className="text">{state.user.name}</span>
+          : <span className="text">Sem usuário</span> 
+        }
+
+        <span className="text">{state.number}</span>
+        <div>
+          <button className="btn"
+            onClick={() => dispatch({ type: "login" })}>Login</button>
+          <button className="btn" 
+            onClick={() => dispatch({ type: "add2ToNumber" })}>+2</button>
+        </div>
+      </div>
+    
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- E se não quisermos ter o _name_ fixo, quesermos passar isso para a função? Para isso, vamos fazer o seguinte... dentro da ação/_action_ podemos passar um segundo atributo, que pode ser o _name_ e vamos acessar esse atributo de dentro do objeto _action_ usando _action.name_(podemos fazer o mesmo para o email se quisermos):
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    case "login":
+      return { ...state, user: { name: action.name, email: "nathallyet@gmail.com" } }
+    default:
+      return state;
+  }
+}
+
+const UseReducer = (props) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        {state.user ? 
+          <span className="text">{state.user.name}</span>
+          : <span className="text">Sem usuário</span> 
+        }
+
+        <span className="text">{state.number}</span>
+        <div>
+          <button className="btn"
+            onClick={() => dispatch({ type: "login", name: "Nathallye Tabaresu" })}>Login</button> {/*Normalmente é usado o termo payload*/}
+          <button className="btn" 
+            onClick={() => dispatch({ type: "add2ToNumber" })}>+2</button>
+        </div>
+      </div>
+    
+    </div>
+  )
+}
+
+export default UseReducer;
+```
