@@ -4179,3 +4179,437 @@ const UseReducer = (props) => {
 
 export default UseReducer;
 ```
+
+## useReducer #02
+
+O _useReducer_ via de regra usaremos ele, para controlar uma tela mais complexa ou no contexto mais global dentro da aplicação como vimos no exemplo anterior. 
+Nesse exemplo, vamos ver possibilidades de organizar melhor o código.
+
+- Para vermos isso na prática, vamos criar dentro da pasta src uma pasta chamada _store_(normalmente usamos esse nome quando usamos o redux) e dentro dessa pasta vamos criar um arquivo chamado _config.js_.
+
+- Vamos pegar o estado inicial/_initialState_ de dentro do componente _UseReducer_ e colocar nesse arquivo _config.js_, e exportar o estado para que ele fique acessível. 
+Podemos fazer o mesmo com a função _reducer_, vamos recortá-la do arquivo _UseReducer_ e colar no arquivo _config.js_, por fim exportar a função para que fique acessível:
+
+``` JavaScript
+export const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+export function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    case "login":
+      return { ...state, user: { name: action.name, email: "nathallyet@gmail.com" } }
+    //exercício #02
+    case "multFor7Number":
+      return { ...state, number: state.number * 7 };
+    case "divFor25Number":
+      return { ...state, number: state.number / 25 };
+    case "parseIntNumber":
+      return { ...state, number: parseInt(state.number) }
+    case "addAnyToNumber":
+      return { ...state, number: state.number + action.n }
+    default:
+      return state;
+  }
+}
+```
+
+- E para que funcione tudo direitinho, vamos importar o _initialState_ e a função _reducer_ dentro do componente _UseReducer_:
+
+``` JavaScript
+import React, { useReducer } from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import { initialState, reducer } from "../../store/config";
+
+const UseReducer = (props) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <div className="UseReducer">
+      <PageTitle
+        title="Hook UseReducer"
+        subtitle="Uma outra forma de ter estado em componentes funcionais!"
+      />
+
+      <SectionTitle title="Exercício #01"/>
+      <div className="center">
+        {state.user ? 
+          <span className="text">{state.user.name}</span>
+          : <span className="text">Sem usuário</span> 
+        }
+
+        <span className="text">{state.number}</span>
+        <div>
+          <button className="btn"
+            onClick={() => dispatch({ type: "login", name: "Nathallye Tabaresu" })}>Login</button> {/*Normalmente é usado o termo payload*/}
+          <button className="btn" 
+            onClick={() => dispatch({ type: "add2ToNumber" })}>+2</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #02"/>
+      <div className="center">
+        <div>
+          <button className="btn"
+            onClick={() => dispatch({ type: "multFor7Number" })}>x7</button>
+          <button className="btn"
+            onClick={() => dispatch({ type: "divFor25Number" })}>÷25</button>
+          <button className="btn"
+            onClick={() => dispatch({ type: "parseIntNumber" })}>Converter para inteiro</button>
+          <button className="btn"
+            onClick={() => dispatch({ type: "addAnyToNumber", n: 5 })}>+5</button>
+          <button className="btn"
+            onClick={() => dispatch({ type: "addAnyToNumber", n: -5 })}>-5</button>
+        </div>
+      </div>
+
+      <SectionTitle title="Exercício #03"/>
+
+
+    </div>
+  )
+}
+
+export default UseReducer;
+```
+
+- Com relação as ações _dispatch_... qual o objetivo dessa função arrow? Basicamente é chamar o _dispatch_ a partir de uma action, normalmente chamam esse tipo de função de _action creater_(o objetivo dela é criar uma action, mas nesse caso ela cria e dispara a ação).
+Podemos pegar algumas dessas ações e colocar dentro da pasta _store_... dentro dessa pasta vamos criar uma pasta chamada _actions_ e nela vamos criar um arquivo chamado _number.js_, nela vai ficar as ações que queremos gerar "emcima" dos números/atributo _number_.
+Nesse arquivo, vamos criar uma função com o nome da ação _add2ToNumber_ e essa função vai receber como parâmetro o _dispatch_ e ela vai chamar o _dispatch_ emcima do _type_ da action "add2ToNumber". Essa função faz o mesmo que está dentro do _useReducer_, só que ao invés de colocar diretamente, colocamos dentro de outro arquivo para termos a capacidade de gerar funções complexas(além de evitar poluir o código principal) e só chamar o dispatch quando realmente for necessário:
+
+``` JavaScript
+export function add2ToNumber(dispatch) {
+  dispatch({ type: "add2ToNumber" })
+}
+```
+
+- E vamos importar essa action dentro do arquivo _config.js_:
+
+``` JavaScript
+import { add2ToNumber } from "./actions/number";
+
+export const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+export function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    case "login":
+      return { ...state, user: { name: action.name, email: "nathallyet@gmail.com" } }
+    //exercício #02
+    case "multFor7Number":
+      return { ...state, number: state.number * 7 };
+    case "divFor25Number":
+      return { ...state, number: state.number / 25 };
+    case "parseIntNumber":
+      return { ...state, number: parseInt(state.number) }
+    case "addAnyToNumber":
+      return { ...state, number: state.number + action.n }
+    default:
+      return state;
+  }
+}
+
+export {
+  add2ToNumber
+}
+```
+
+- Outra coisa que podemos fazer, é criar uma pasta dentrro de _store_ chamada _reducers_ para organizarmos a função reducer dentro dela... no arquivo _index.js_.
+Primeiro vamos recortar a função que configura os reducers do arquivo _config.js_ e colar dentro de _reducers/index.js_:
+
+``` JavaScript
+export default function reducer(state, action) {
+  switch(action.type) {
+    case "add2ToNumber":
+      return { ...state, number: state.number + 2 };
+    case "login":
+      return { ...state, user: { name: action.name, email: "nathallyet@gmail.com" } }
+    //exercício #02
+    case "multFor7Number":
+      return { ...state, number: state.number * 7 };
+    case "divFor25Number":
+      return { ...state, number: state.number / 25 };
+    case "parseIntNumber":
+      return { ...state, number: parseInt(state.number) }
+    case "addAnyToNumber":
+      return { ...state, number: state.number + action.n }
+    default:
+      return state;
+  }
+}
+```
+
+- Em seguida, vamos importar essa função _reducer_ dentro do arquivo _config.js_ e exportar um objeto que vai conter o _reducer_ e _initialState_:
+
+``` JavaScript
+import { reducer } from "./reducers/index"
+import { add2ToNumber } from "./actions/number";
+
+export const initialState = {
+  cart: [],
+  products: [],
+  user: null,
+  number: 0
+}
+
+export {
+  initialState,
+  reducer,
+  add2ToNumber
+}
+```
+
+## Custom Hooks #01
+
+Vamos aprender como criar o nosso próprio Hook!
+
+- Para entendermos melhor como isso funciona, vamos no diretório src/views/examples e abrir o arquivo referênte ao componente _UseCustom_. Temos um componente funcional seguindo o mesmo padrão que já vimos anteriormente:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  return (
+    <div className="UseCustom">
+      <PageTitle
+        title="Seu Hook"
+        subtitle="Vamos aprender como criar o nosso próprio Hook!"
+      />
+
+      <SectionTitle title="#Exercício #01"/>
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E nesse componente vamos criar uma _div_ com a class _center_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+const UseRef = (props) => {
+  return (
+    <div className="UseCustom">
+      <PageTitle
+        title="Seu Hook"
+        subtitle="Vamos aprender como criar o nosso próprio Hook!"
+      />
+
+      <SectionTitle title="#Exercício #01"/>
+      <div className="center">
+        
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Dentro da pasta src vamos criar uma nova pasta chamada _hooks_ e dentro dela um hook chamado _useCounter.js_ para ser um hook que vai encapsular um contador...
+Dentro desse hook vamos importar o react e em seguida criar uma função chamada _useCounter_ que vai receber como parâmetro o valor inicial/_initialValue_(se ele não foi passado um valor para ele, vai ser inicializado com 100) e vamos exportar essa função para que fique acessível:
+
+``` JavaScript
+import React from "react";
+
+export const useCounter = (initialValue = 100) => {
+
+}
+```
+
+- E dentro dessa função, vamos retornar dois métodos para o contador, o método de incrementar e o método de decrementar... então o que vamos fazer? Dentro de um hook podemos usar outros hooks e nesse caso vamos usar o _useState_ para criarmos o estado inicial de _count_ e a function _setCount_. O _useState_ vai receber como valor inicial para _count_ o _initialValue_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+export const useCounter = (initialValue = 100) => {
+  const [count, setCount] = useState(initialValue);
+}
+```
+
+- Em seguida, dentro da função _useCounter_ vamos criar uma função de incremento que vai se chamar _inc_ e essa função de incremento vai chamar o _setCount_ e vai pegar o _count_ atual e incrementar _+1_.
+E vamos seguir a mesma linha para a função de decrementar que vai se chamar _dec_:
+
+``` JavaScript
+import React, { useState } from "react";
+
+export const useCounter = (initialValue = 100) => {
+  const [count, setCount] = useState(initialValue);
+
+  function inc() {
+    setCount(count + 1)
+  }
+
+  function dec() {
+    setCount(count - 1)
+  }
+}
+```
+
+- E no final, vamos retornar/_return_ um array com o _count_, _inc_ e _dec_:
+
+``` JavaScript
+import { useState } from "react";
+
+export const useCounter = (initialValue = 100) => {
+  const [count, setCount] = useState(initialValue);
+
+  function inc() {
+    setCount(count + 1)
+  }
+
+  function dec() {
+    setCount(count - 1)
+  }
+
+  return [count, inc, dec];
+}
+```
+
+- Com isso, podemos voltar no componente _UseCustom_ e importar através do _useCounter_ os três valores que recebemos como resposta... _count_, _inc_ e _dec_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import { useCounter } from "../../hooks/useCounter";
+
+const UseRef = (props) => {
+
+  const [count, inc, dec] = useCounter();
+
+  return (
+    <div className="UseCustom">
+      <PageTitle
+        title="Seu Hook"
+        subtitle="Vamos aprender como criar o nosso próprio Hook!"
+      />
+
+      <SectionTitle title="#Exercício #01"/>
+      <div className="center">
+        
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E uma vez que fizemos isso, dentro da _div_ podemos criar um _span_ com a class _text_ e interpolar o valor de _count_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import { useCounter } from "../../hooks/useCounter";
+
+const UseRef = (props) => {
+
+  const [count, inc, dec] = useCounter();
+
+  return (
+    <div className="UseCustom">
+      <PageTitle
+        title="Seu Hook"
+        subtitle="Vamos aprender como criar o nosso próprio Hook!"
+      />
+
+      <SectionTitle title="#Exercício #01"/>
+      <div className="center">
+        <span className="text">{count}</span>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E em seguida criar uma _div_ para inserirmos os _button_ com a class _btn_ onde através do evento _onClick_ vão chamar as funções de _inc_ e _dec_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import { useCounter } from "../../hooks/useCounter";
+
+const UseRef = (props) => {
+
+  const [count, inc, dec] = useCounter();
+
+  return (
+    <div className="UseCustom">
+      <PageTitle
+        title="Seu Hook"
+        subtitle="Vamos aprender como criar o nosso próprio Hook!"
+      />
+
+      <SectionTitle title="#Exercício #01"/>
+      <div className="center">
+        <span className="text">{count}</span>
+
+        <div>
+          <button className="btn" onClick={() => inc()}>Inc</button>
+          <button className="btn" onClick={() => dec()}>Dec</button>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+## Custom Hooks #02
+
+- Nesse exemplo, vamos acessar o json que está nessa url http://files.cod3r.com.br/curso-react/estados.json, e vamos encapsular essa chamada aos dados desse json dentro de um hook:
+
+``` JavaScript 
+fetch("http://files.cod3r.com.br/curso-react/estados.json")
+  .then(resp => resp.json())
+  .then(json => console.log(json))
+```
+
+- Para isso, primeiramente na pasta _hooks_ vamos criar um novo hook chamado _useFetch_.
+Nesse arquivo vamos criar uma constante que vai armazenar a função _useFetch_ e essa função vai receber dois parâmetros, o primeiro parâmetro vai ser a _url_ e o segundo parâmetro vai ser o método/_method_, supondo que o método padrão vai ser o _get_. Por fim vamos exportar/_export_ essa função _useFetch_:
+
+``` JavaScript
+export const useFetch  = (url, method = "get") => {
+  
+}
+```
+
+- Dentro dessa função vamos criar um estado 
