@@ -4612,4 +4612,190 @@ export const useFetch  = (url, method = "get") => {
 }
 ```
 
-- Dentro dessa função vamos criar um estado 
+- Dentro dessa função vamos criar um estado com o hook _useState_, onde vamos criar um array de duas posições, a primeira posição será _response_ que vai receber os valores iniciais que vai ser um objeto/_{}_ com os dois atributos, o primeiro atributo será dados/_data_ que vamos obter, que nesse caso vai ser a lista dos estados e inicialmente vai ser _null_ e o segundo atributo será o carregando/_loading_ para enquanto ele ainda tiver carregando os dados e inicialmente será _true_(quando o _loading_ for _false_ significa que já terminou de carregar). E a segunda posição será o _setResponse_ que vai receber a função que poderá alterar os dados de _response_.
+Por fim, a função irá retornar/_return_ o objeto _response_:
+
+``` JavaScript
+import { useState } from "react";
+
+export const useFetch  = (url, method = "get") => {
+  const [response, setResponse] = useState({
+    data: null,
+    loading: true
+  });
+
+  return response;
+}
+```
+
+- Como queremos executar a função de chamar o _fetch_ diretamente dentro da função _useFetch_, ou seja, vai gerar um efeito colateral nos dados do _response_, então iremos usar o hook _useEffect_... Vamos passar uma função para esse _useEffect_ e essa função vai ter duas dependências/_DependencyList_ que vão ser a _url_(se ela mudar automáticamente a função será executada) e o _method_(se ele mudar automáticamente a função será executada):
+
+``` JavaScript
+import { useEffect, useState } from "react";
+
+export const useFetch  = (url, method = "get") => {
+  const [response, setResponse] = useState({
+    data: null,
+    loading: true
+  });
+
+  useEffect(function() {
+
+  }, [url, method])
+
+  return response;
+}
+```
+
+- E dentro da função iremos mudar o estado/_response_ com um _fetch_ que vai receber dois parâmetros, o primeiro será a _url_ e o segundo parâmetro será um objeto que vai conter o atributo _method_(temos esse atributo método, quando recebemos o parâmetro método não necessáriamente precisamos colocar assim {_method: method_}).
+Feito isso, teremos o _then_ que vai ter uma resposta/_resp_ e vamos chamar ela em formato json (_resp.json()_) para converter e isso vai retornar uma _promisse_; 
+Então, em seguida iremos chamar novamente o método _then_ com o _json_ que irá retornar o _setResponse()_ com um objeto onde o atributo _data_ vai ser exatamente o _json_ que obtivemos e o atributo _loading_ vai ser _false_, pois o carregamento acabou:
+
+``` JavaScript
+import { useEffect, useState } from "react";
+
+export const useFetch  = (url, method = "get") => {
+  const [response, setResponse] = useState({
+    data: null,
+    loading: true
+  });
+
+  useEffect(function() {
+    fetch(url, { method })
+      .then(resp => resp.json())
+      .then(json => setResponse({
+        data: json,
+        loading: false
+      }))
+  }, [url, method])
+
+  return response;
+}
+```
+
+- Agora, vamos chamar esse hook _useFetch_ dentro do componente _useCustom_ e vamos receber como resposta o retorno de _response_ e vamos passar a _url: http://files.cod3r.com.br/curso-react/estados.json_ como parâmetro para _url_ do _useFetch_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import { useCounter } from "../../hooks/useCounter";
+import { useFetch } from "../../hooks/useFetch";
+
+const UseRef = (props) => {
+
+  const [count, inc, dec] = useCounter();
+
+  const url = "http://files.cod3r.com.br/curso-react/estados.json";
+  const response = useFetch(url);
+
+  return (
+    <div className="UseCustom">
+      // [...]
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- E vamos criar uma função chamada _showStates_ que vai receber o array de objetos dos estados/_states_ e vai fazer um _map_ no conteúdo de _states_ e vai retornar elementos _<li>_ com o _nome_ e a _sigla_ de cada _state_:
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import { useCounter } from "../../hooks/useCounter";
+import { useFetch } from "../../hooks/useFetch";
+
+const UseRef = (props) => {
+
+  const [count, inc, dec] = useCounter();
+
+  const url = "http://files.cod3r.com.br/curso-react/estados.json";
+  const response = useFetch(url);
+
+  function showStates(states) {
+    return states.map(state => <li>{state.nome} - {state.sigla}</li>)
+  }
+
+  return (
+    <div className="UseCustom">
+      <PageTitle
+        title="Seu Hook"
+        subtitle="Vamos aprender como criar o nosso próprio Hook!"
+      />
+
+      <SectionTitle title="#Exercício #01"/>
+      <div className="center">
+        <span className="text">{count}</span>
+
+        <div>
+          <button className="btn" onClick={() => inc()}>Inc</button>
+          <button className="btn" onClick={() => dec()}>Dec</button>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
+
+- Agora, podemos criar uma _div_ com a class _center_ e dentro dela criar uma lista desordenada _ul_ e dentro dessa lista podemos chamar a função _showStates_ passando os dados da resposta/_response.data_ caso ela exista({_response.data ? showStates(response.data)_), caso contrário retorna (: _false_})
+
+``` JavaScript
+import React from "react";
+
+import PageTitle from "../../components/layout/PageTitle";
+import SectionTitle from "../../components/layout/SectionTitle";
+
+import { useCounter } from "../../hooks/useCounter";
+import { useFetch } from "../../hooks/useFetch";
+
+const UseRef = (props) => {
+
+  const [count, inc, dec] = useCounter();
+
+  const url = "http://files.cod3r.com.br/curso-react/estados.json";
+  const response = useFetch(url);
+
+  function showStates(states) {
+    return states.map(state => <li key={state.nome}>{state.nome} - {state.sigla}</li>)
+  }
+
+  return (
+    <div className="UseCustom">
+      <PageTitle
+        title="Seu Hook"
+        subtitle="Vamos aprender como criar o nosso próprio Hook!"
+      />
+
+      <SectionTitle title="#Exercício #01"/>
+      <div className="center">
+        <span className="text">{count}</span>
+
+        <div>
+          <button className="btn" onClick={() => inc()}>Inc</button>
+          <button className="btn" onClick={() => dec()}>Dec</button>
+        </div>
+      </div>
+
+      <SectionTitle title="#Exercício #02"/>
+      <div className="center">
+        <ul>
+          {response.data ? showStates(response.data) : false}
+        </ul>
+      </div>
+
+    </div>
+  )
+}
+
+export default UseRef;
+```
