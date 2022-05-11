@@ -359,3 +359,113 @@ export default function Cabecalho(props) {
   )
 }
 ```
+
+## Navegação entre Componentes 
+
+- Vamos entender uma funcionalidade do Next.js para navegação entre componentes via _Link_. Vamos no arquivo _index.js_ e vamos excluir o que tem dentro da _div_ e vamos importar o _Link_ de dentro do _next/link_:
+
+``` JSX
+import Link from "next/link"
+
+export default function Inicio() {
+  return (
+    <div>
+      
+    </div>
+  )
+}
+```
+
+- E com isso, vamos criar um _Link_ e dentro desse link vamos definir o atributo obrigatório _href_ que nada mais é do que o caminho para acessar o link que queremos(link do componente que foi criado pelo next) e dentro do _Link_ vamos definir o nome dele(nome do componente):
+
+``` JSX
+import Link from "next/link"
+
+export default function Inicio() {
+  return (
+    <div>
+      <Link href="/estiloso">
+        Estilo
+      </Link>
+    </div>
+  )
+}
+```
+
+- E dentro desse componente _Estiloso_ podemos criar um _Link_ para voltar para o _index_. Vamos importar _Link_ de _next/link_ e criar o link para o _/_ com o nome _Voltar_:
+
+``` JSX
+import Link from 'next/link'
+import styles from '../styles/Estiloso.module.css'
+
+export default function Estiloso() {
+  return (
+    <div className={styles.roxo}>
+      <Link href="/">Voltar</Link>
+
+      <h1>Componente para teste de CSS Modularizado</h1>
+    </div>
+  )
+}
+```
+
+## Componente Layout
+
+- Dentro de _src/components_ vamos criar um componente que vai representar o layout da página, ele irá se chamar _Layout_. Dentro desse arquivo vamos criar um componente funcional:
+
+``` JSX
+export default function Layout(props) {
+  return (
+    <div>
+      
+    </div>
+  )
+}
+```
+
+- Em seguida, vamos importar o _Link_ do _next/link_ e vamos definir um link que irá voltar para o home da nossa aplicação:
+
+``` JSX
+import Link from "next/link"
+
+export default function Layout(props) {
+  return (
+    <div>
+      <Link href="/">Voltar</Link>
+
+    </div>
+  )
+}
+```
+
+- E depois vamos passar um conteúdo para esse componente Layout... como assim? Queremos pegar o conteúdo de outro componente e renderizar na tela. Por exemplo, vamos importar o componente _Layout_ que contém o link de voltar para o home dentro do componente _Estiloso_ e vamos envolver o conteúdo desse componente _Estiloso_ com o componente _Layout_ que importamos, para ele ter sem precisarmos criar manualmente o botão/link de voltar para o home:
+
+``` JSX
+import Layout from "../components/Layout"
+import styles from "../styles/Estiloso.module.css"
+
+export default function Estiloso() {
+  return (
+    <Layout>
+      <div className={styles.roxo}>
+        <h1>Componente para teste de CSS Modularizado</h1>
+      </div>
+    </Layout>
+  )
+}
+```
+
+- Só que, se acessarmos a url do componente _Estiloso_ vamos notar que só está sendo renderizado o que está no componente _Layout_, ou seja, o link voltar. Isso ocorre, pois é necessário informar dentro do componente _Layout_ que desejamos renderizar o conteúdo que foi passado dentro dele através dos componentes filhos(props.children):
+
+``` JSX
+import Link from "next/link"
+
+export default function Layout(props) {
+  return (
+    <div>
+      <Link href="/">Voltar</Link>
+      {props.children}
+    </div>
+  )
+}
+```

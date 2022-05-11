@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export default function Jsx() {
   const a = 2
   const b = 3
@@ -5,6 +7,7 @@ export default function Jsx() {
   
   return (
     <div>
+      <Link href="/">Voltar</Link>
       <h1>JSX é um conceito central</h1>
       {subtitulo} {/* acessando o trecho JSX da constante subtitulo */}
       <h3>{a * b}</h3> {/* vai ser feito a multiplicação e o resultado vai ser renderizado em tela */}
