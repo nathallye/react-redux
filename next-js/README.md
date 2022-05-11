@@ -369,9 +369,7 @@ import Link from "next/link"
 
 export default function Inicio() {
   return (
-    <div>
-      
-    </div>
+
   )
 }
 ```
@@ -383,11 +381,9 @@ import Link from "next/link"
 
 export default function Inicio() {
   return (
-    <div>
       <Link href="/estiloso">
-        Estilo
+        Estiloso
       </Link>
-    </div>
   )
 }
 ```
@@ -621,3 +617,342 @@ export default function Layout(props) {
   padding: 25px;
 }
 ```
+
+- Vamos voltar para o arquivo _Layout.jsx_ e vamos inserir um texto/titulo no cabeçalho, e vamos receber ele via _props_ e se não for passado nenhum parâmetro para esse _titulo_ por padrão vai ser inserido no _h1_ o texto "Mais um exemplo":
+
+``` JSX
+import styles from "../styles/Layout.module.css"
+
+import Link from "next/link"
+
+export default function Layout(props) {
+  return (
+    <div className={styles.layout}>
+      <div className={styles.cabecalho}>
+        <h1>{props.titulo ?? "Mais um exemplo"}</h1>
+        <Link href="/">Voltar</Link>
+      </div>
+      <div className={styles.conteudo}>
+        {props.children}
+      </div>
+    </div>
+  )
+}
+```
+
+- E dentro do arquivo do componente _Estiloso_ vamos passar via _props_ o titilo através do componente _Layout_(componente pai):
+
+``` JSX
+import Layout from "../components/Layout"
+import styles from "../styles/Estiloso.module.css"
+
+export default function Estiloso() {
+  return (
+    <Layout titulo="Exemplo de CSS Modularizado">
+      <div className={styles.roxo}>
+        <h1>Componente para teste de CSS Modularizado</h1>
+      </div>
+    </Layout>
+  )
+}
+```
+
+- E na folha de estilho de _Layout_ onde tem a class _cabecalho_ e _h1_ vamos zerar a _margin_ e o tamanho da fonte _font-size_ vai ser _1.4rem_:
+
+``` CSS Layout.module.css
+.layout {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 10px 20px;
+
+  background-color: #777;
+}
+
+.cabecalho h1 {
+  margin: 0;
+
+  font-size: 1.4rem;
+}
+
+.cabecalho a {
+  background-color: coral;
+
+  padding: 5px 12px;
+  border-radius: 5px;
+}
+
+.conteudo {
+  padding: 25px;
+}
+```
+
+- E vamos alterar o _justify-content_ do _cabecalho_ para _space-between_, desse modo ele vai organizar os elementos um mais a esquerda(h1) e outro mais a direita(Link):
+
+``` CSS Layout.module.css
+.layout {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 10px 20px;
+
+  background-color: #777;
+}
+
+.cabecalho h1 {
+  margin: 0;
+
+  font-size: 1.4rem;
+}
+
+.cabecalho a {
+  background-color: coral;
+
+  padding: 5px 12px;
+  border-radius: 5px;
+}
+
+.conteudo {
+  padding: 25px;
+}
+```
+
+## Componente Navegador
+
+- Temos os nossos Link dentro do _index_, só que queremos aplicar estilo nele, o ideial é que a gente o coloque dentro de um componente, para isso vamos criar um componente chamado _Navegador_ dentro de _src/components_, e esse componente será um componente funcional:
+
+``` JSX
+export default function Navegador(props) {
+  return (
+    
+  )
+}
+```
+
+- E vamos encapsular dentro desse componente o _Link_ que temos dentro de _index.jsx_:
+
+``` JSX
+import Link from "next/link"
+
+export default function Navegador(props) {
+  return (
+      <Link href="/estiloso">
+        Estiloso
+      </Link>
+  )
+}
+```
+
+- E dentro do arquivo _index.jsx_ ao invés de chamar diretamente o _Link_ vamos chamar esse componente _Navegador_ que contém os links:
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div>
+      <Navegador />
+    </div>
+  )
+}
+```
+
+- Agora, iremos trabalhar com as propriedades e aprimeira coisa que vamos modificar é que agora vamos receber o _href_ via _props_ através do atributo _destino_, bem como o texto desse link via o atributo _texto_:
+
+``` JSX
+import Link from "next/link"
+
+export default function Navegador(props) {
+  return (
+      <Link href={props.destino}>
+        {props.texto}
+      </Link>
+  )
+}
+```
+
+- E vamos passar tanto o _href_ quanto o _texto_ do link via props onde estamos renderizado esse componente _Navegador_(no arquivo _index_):
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div>
+      <Navegador destino="/estiloso" texto="Estiloso"/>
+    </div>
+  )
+}
+```
+
+- Em seguida, vamos criar uma folha de estilo para o componente _Navegador_ dentro de _src/styles_ chamado _Navegador.module.css_. E vamos referênciar esse arquivo CSS dentro de _Navegador.jsx_ como _styles_:
+
+``` JSX
+import Link from "next/link"
+
+import styles from "../styles/Navegador.module.css"
+
+export default function Navegador(props) {
+  return (
+      <Link href={props.destino}>
+        {props.texto}
+      </Link>
+  )
+}
+```
+
+- Agora temos a possibilidade de definir algumas classes. Vamos inserir uma _div_ dentro do _Link_ para aplicarmos uma classe chamada _navegador_(styles.navegador):
+
+``` JSX
+import Link from "next/link"
+
+import styles from "../styles/Navegador.module.css"
+
+export default function Navegador(props) {
+  return (
+      <Link href={props.destino}>
+        <div className={styles.navegador}>
+          {props.texto}
+        </div>
+      </Link>
+  )
+}
+```
+
+- E vamos usar essa classe _navegador_ dentro da folha de estilo _Navegador.module.css_. E vamos aplicar um _background-color_ e um _padding_ de _30px_ em todas as direções:
+
+``` CSS Navegador.module.css
+.navegador {
+  background-color: blueviolet;
+
+  padding: 30px;
+}
+```
+
+- E no arquivo _index.css_ vamos definir alguns estilos interno dentro da propria propriedade _style_. 
+Assim vamos mudar o _display_ para _"flex"_, e definir uma altura/_height_ de _100vh_ e o _justifyContent_(não pode ter iffen dentro do arquivo JS) vamos mudar para _"center"_ , o _alingItems_ para _"center"_ também, além disso, vamos informar que queremos permitir quebra de linha com a propriedade _flexWrap_ como _"wrap"_:
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexWrap: "wrap",
+      height: "100vh"
+    }}>
+      <Navegador destino="/estiloso" texto="Estiloso"/>
+      <Navegador destino="/exemplo" texto="Exemplo"/>
+      <Navegador destino="/jsx" texto="JSX"/>
+    </div>
+  )
+}
+```
+
+- E vamos voltar dentro da folha de estilo do _Navegador_ e definir uma _margin_ de _10px_ para que os links não fiquem grudados. Além disso, podemos definir um _border-radius_ de _8px_ para que o link tenha uma borda arredondada:
+
+``` CSS Navegador.module.css
+.navegador {
+  background-color: blueviolet;
+
+  margin: 10px;
+  padding: 30px;
+  border-radius: 8px;
+}
+```
+
+- E a última coisa que vamos alterar no estilo é... ao invés de passarmos a cor do _background-color_ diretamente, podemos voltar no componente Navegador e aplicar um estilo/_style_ de forma dinâmica, caso ele receba a cor via props/_props.cor_ ele vai usar a que ele recebe, caso contrário ele vai usar a cor padrão definida:
+
+``` JSX
+import Link from "next/link"
+
+import styles from "../styles/Navegador.module.css"
+
+export default function Navegador(props) {
+  return (
+      <Link href={props.destino}>
+        <div className={styles.navegador} style={{
+          backgroundColor: props.cor ?? "blueviolet"
+        }}>
+          {props.texto}
+        </div>
+      </Link>
+  )
+}
+```
+
+- Agora, se voltarmos no arquivo _index_ podemos além de passar o _href_ e o _texto_ via props para o destino, podemos também passar a _cor_ para o background:
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexWrap: "wrap",
+      height: "100vh"
+    }}>
+      <Navegador destino="/estiloso" texto="Estiloso" cor="cadetblue"/>
+      <Navegador destino="/exemplo" texto="Exemplo"/>
+      <Navegador destino="/jsx" texto="JSX" cor="brown"/>
+    </div>
+  )
+}
+```
+
+- Para finalizar, vamos envolver com o componente _Layout_(assim como fizemos com o componente estiloso) todos os outros componentes(jsx, exemplo) que estão sendo renderizados através do Link:
+
+``` JSX
+import Layout from "../components/Layout"
+import Cabecalho from "../components/Cabecalho";
+
+export default function Exemplo() {
+  return (
+    <Layout titulo="Usando Componente">
+      <Cabecalho titulo="Título 1"/>
+      <Cabecalho titulo="Título 2"/>
+    </Layout>
+  )
+}
+```
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function Jsx() {
+  const a = 2
+  const b = 3
+  const subtitulo = <h2>Teste</h2>
+  
+  return (
+    <Layout titulo="Entendo o JSX">
+      <h1>JSX é um conceito central</h1>
+      {subtitulo} {/* acessando o trecho JSX da constante subtitulo */}
+      <h3>{a * b}</h3> {/* vai ser feito a multiplicação e o resultado vai ser renderizado em tela */}
+    </Layout>
+  )
+}
+```
+
+## Navegação Simples
+
