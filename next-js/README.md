@@ -866,7 +866,7 @@ export default function Inicio() {
 }
 ```
 
-- E vamos voltar dentro da folha de estilo do _Navegador_ e definir uma _margin_ de _10px_ para que os links não fiquem grudados. Além disso, podemos definir um _border-radius_ de _8px_ para que o link tenha uma borda arredondada:
+- E vamos voltar dentro da folha de estilo do _Navegador_ e definir uma _margin_ de _10px_ para que os links não fiquem grudados. Além disso, podemos definir um _border-radius_ de _8px_ para que o link tenha uma borda arredondada, além disso para quando passar o cursor do mouse sobre os links fique claro que se trata de um link/algo clicável, vamos inserir a propriedade _cursor_ com o valor _pointer_:
 
 ``` CSS Navegador.module.css
 .navegador {
@@ -875,6 +875,8 @@ export default function Inicio() {
   margin: 10px;
   padding: 30px;
   border-radius: 8px;
+
+  cursor: pointer;
 }
 ```
 
@@ -956,3 +958,39 @@ export default function Jsx() {
 
 ## Navegação Simples
 
+- Uma coisa que podemos fazer é criar uma pasta dentro de _src/pages_ chamada _navegacao_ por exemplo, e dentro dela criar um arquivo _index.jsx_ com um componente funcional chamado _Navegacao_:
+
+``` JSX
+import Layout from "../../components/Layout"
+
+export default function Navegacao() {
+  return (
+    <Layout titulo="Exemplo de Navegação #01">
+      <h1>Navegação #01</h1>
+    </Layout>
+  )
+}
+```
+
+- E quando formos  referênciar a url desse componente dentro de _src/pages/index.jsx_ em um novo componente _Navegador_ podemos acessar diretamente através de _/navegacao_, não sendo necessário acessar por _navegacao/index_, pois só o _"/"_ acessa diretamente o index, como fazemos com a home/_index_ principal da nossa aplicação:
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexWrap: "wrap",
+      height: "100vh"
+    }}>
+      <Navegador destino="/estiloso" texto="Estiloso" cor="cadetblue"/>
+      <Navegador destino="/exemplo" texto="Exemplo"/>
+      <Navegador destino="/jsx" texto="JSX" cor="brown"/>
+      <Navegador destino="/navegacao" texto="Navegação #01" cor="green"/> {/*como se destino fosse assim: destino="/navegacao/index"*/}
+    </div>
+  )
+}
+```
