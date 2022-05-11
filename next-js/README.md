@@ -469,3 +469,155 @@ export default function Layout(props) {
   )
 }
 ```
+
+- Vamos criar uma folha de estilo para layout dentro de _src/styles_ com o nome _Layout.module.css_ e vamos referênciar esse arquivo como _styles_ dentro do seu componente:
+
+``` JSX
+import styles from "../styles/Layout.module.css"
+
+import Link from "next/link"
+
+export default function Layout(props) {
+  return (
+    <div>
+      <Link href="/">Voltar</Link>
+      {props.children}
+    </div>
+  )
+}
+```
+
+- Desse modo, podemos criar uma classe e referênciar ela como _styles.nome-classe_, que nesse caso o nome da classe será layout:
+
+``` JSX
+import styles from "../styles/Layout.module.css"
+
+import Link from "next/link"
+
+export default function Layout(props) {
+  return (
+    <div className={styles.layout}>
+      <Link href="/">Voltar</Link>
+      {props.children}
+    </div>
+  )
+}
+```
+
+- E podemos selecionar essa classe no arquivo _Layout.module.css_ e aplicar algumas propriedades de estilo:
+
+``` CSS Layout.module.css
+.layout {
+  
+}
+```
+
+- Dentro dela vamos aplicar uma altura/_height_ de _100vh_ para que o componente ocupe todo o espaço disponível, além disso, vamos definir o _display_ como _flex_ e alterar o _flex-direction_ para _column_:
+
+``` CSS Layout.module.css
+.layout {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+}
+```
+
+- Feito isso, vamos voltar no arquivo do componente _Layout_ e vamos dividir o componente em duas partes, uma que vai conter o cabeçalho com os links e outra parte que vai conter o conteúdo, ambas as partes terão suas próprias classes CSS:
+
+``` JSX
+import styles from "../styles/Layout.module.css"
+
+import Link from "next/link"
+
+export default function Layout(props) {
+  return (
+    <div className={styles.layout}>
+      <div className={styles.cabecalho}>
+        <Link href="/">Voltar</Link>
+      </div>
+      <div className={styles.conteudo}>
+        {props.children}
+      </div>
+    </div>
+  )
+}
+```
+
+- Em seguida, e essa classe _cabecalho_ que criamos para o cabeçalho vamos selecionar ela dentro da folha de estilo e iremos aplicar um _background-color_ e mudar o _display_ para _flex_ e o _justify-content_ como _flex-end_ para alinhar o texto do cabeçalho todo para a direita, e um _padding_ no eixo y(vertical) de _10px_ e no eixo x(horizontal) de _20px_:
+
+``` CSS Layout.module.css
+.layout {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 10px 20px;
+
+  background-color: #777;
+}
+```
+
+- E um ponto importânte sobre o componente _Link_ que gera os links(que se encontra dentro do _Layout_) é que por trás dos panos é gerado um link/tag _a_ automáticamente, então podemos usar essa tag _a_ para aplicarmos estilo CSS nele... e vamos aplicar um _background-color_ e aplicar um _padding_ no eixo y(vertical) de _5px_ e no eixo x(horizontal) de _12px_, além disso, definir uma _border-radius_ de _5px_:
+
+``` CSS Layout.module.css
+.layout {
+  display: flex;
+  flex-direction: column;
+
+  height: 100vh;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 10px 20px;
+
+  background-color: #777;
+}
+
+.cabecalho a {
+  background-color: coral;
+
+  padding: 5px 12px;
+  border-radius: 5px;
+}
+```
+
+- Em seguida, vamos usar a classe _conteudo_ que criamos para o conteúdo, iremos aplicar um _padding_ de _25px_ em todas as direções:
+
+``` CSS Layout.module.css
+.layout {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 10px 20px;
+
+  background-color: #777;
+}
+
+.cabecalho a {
+  background-color: coral;
+
+  padding: 5px 12px;
+  border-radius: 5px;
+}
+
+.conteudo {
+  padding: 25px;
+}
+```
