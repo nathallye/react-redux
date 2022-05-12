@@ -994,3 +994,106 @@ export default function Inicio() {
   )
 }
 ```
+
+## Navegação Dinâmica/Por id
+
+- A navegação dinâmica é últil quando queremos acessar por exemplo um cliente por código. Para entendermos melhor, vamos criar dentro de _src/pages_ uma pasta chamada _cliente_ e dentro dela vamos criar um arquivo _[código].jsx_(o par de chaves é para deixar a url desse código dinâmica e o valor dentro do par de chaves vai ser o nome do parâmetro que ele vai receber). Em seguida, dentro dele vamos criar um componente funcional:
+
+``` JSX
+export default function ClientePorCodigo(props) {
+  return (
+    
+  )
+}
+```
+
+- Dentro desse componente vamos importar o componente _Layout_ e referenciar passando o atributo _titulo_ para ele:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function ClientePorCodigo(props) {
+  return (
+    <Layout titulo="Navegação dinâmica">
+
+    </Layout>
+  )
+}
+```
+
+- E dentro dele vamos criar um _span_ para exibir o código desse cliente:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function ClientePorCodigo(props) {
+  return (
+    <Layout titulo="Navegação dinâmica">
+      <span>Código = ?????</span>
+    </Layout>
+  )
+}
+```
+
+- E no arquivo _index.jsx_ vamos duplicar o componente _Navegador_ e referenciar a url desse novo componente como _/cliente/1, o _1_ será o código do cliente:
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexWrap: "wrap",
+      height: "100vh"
+    }}>
+      <Navegador destino="/estiloso" texto="Estiloso" cor="cadetblue"/>
+      <Navegador destino="/exemplo" texto="Exemplo"/>
+      <Navegador destino="/jsx" texto="JSX" cor="brown"/>
+      <Navegador destino="/navegacao" texto="Navegação #01" cor="green"/> 
+      <Navegador destino="/cliente/1" texto="Navegação #02" cor="pink"/> 
+    </div>
+  )
+}
+```
+
+- E como podemos acessar esse valor, esse código do cliente que está sendo enviado pela rota? Vamos importar o hook _useRouter_ de dentro do _nex/router_ e ele irá nos ajudar a ter acesso ao valor. Vamos criar uma constante chamada _router_ e ela irá receber o _useRouter()_:
+
+``` JSX
+import Layout from "../../components/Layout"
+
+import { useRouter } from "next/router"
+
+export default function ClientePorCodigo(props) {
+  const router = useRouter()
+  
+  return (
+    <Layout titulo="Navegação dinâmica">
+      <span>Código = ?????</span>
+    </Layout>
+  )
+}
+```
+
+- Se olharmos no console o que essa instância _router_ está retornando, podemos notar que está retornando um objeto e que o código está dentro do _query_ no atributo _codigo_, desse modo podemos acessar o valor do _codigo_ assim _router.query.codigo_:
+
+``` JSX
+import Layout from "../../components/Layout"
+
+import { useRouter } from "next/router"
+
+export default function ClientePorCodigo(props) {
+  const router = useRouter()
+  console.log(router)
+  
+  return (
+    <Layout titulo="Navegação dinâmica">
+      <span>Código = {router.query.codigo}</span>
+    </Layout>
+  )
+}
+```
+
+## Componente com Estado
