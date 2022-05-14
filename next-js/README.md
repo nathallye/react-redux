@@ -1097,3 +1097,154 @@ export default function ClientePorCodigo(props) {
 ```
 
 ## Componente com Estado
+
+- Para entendermos melhor, vamos criar um componente chamdo _estado.jsx_ dentro de _src/pages_ e esse componente vai ser um componente funcional:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function Estado(props) {
+  return (
+    <Layout titulo="Componente com Estado">
+      
+    </Layout>
+  )
+}
+```
+
+- E em seguida, no arquivo _index_ da aplicação vamos criar mais um componente _Navegador_ o qual vai receber no atributo _destino_ a url _/estado_:
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexWrap: "wrap",
+      height: "100vh"
+    }}>
+      <Navegador destino="/estiloso" texto="Estiloso" cor="cadetblue"/>
+      <Navegador destino="/exemplo" texto="Exemplo"/>
+      <Navegador destino="/jsx" texto="JSX" cor="brown"/>
+      <Navegador destino="/navegacao" texto="Navegação #01" cor="green"/> 
+      <Navegador destino="/cliente/1" texto="Navegação #02" cor="hotpink"/> 
+      <Navegador destino="/estado" texto="Componente com Estado" cor="coral"/> 
+    </div>
+  )
+}
+```
+
+- Agora, vamos aprendender a definir um componente com estado interno... 
+Vamos usar o hook _useState_ e para isso vamos importar o hook _useState_ do React. Agora conseguimos criar estado dentro do nosso componente, mas ao invés de simplesmente criarmos uma variável colocando o valor dela, vamos chamar o _useState_ e passar o valor inicial:
+
+``` JSX
+import { useState } from "react"
+
+import Layout from "../components/Layout"
+
+export default function Estado(props) {
+
+  const state = useState(0)
+
+  return (
+    <Layout titulo="Componente com Estado">
+
+    </Layout>
+  )
+}
+```
+
+- Só que essa função vai retornar um array com duas possições, a primeira possição vai ser o _valor inicial_ e a segunda posição vai ser uma _função que vai ser usada para alterar esse valor_. Como bem sabemos podemos usar atribuição via desestruturação (destructuring assignment). Ex.: const [a, b] = [1, 2], fica assim, a=1 e b=2. Desse modo, vamos usar o destructuring para receber os dois valores do array que _useState_ retorna:
+
+``` JSX
+import { useState } from "react"
+
+import Layout from "../components/Layout"
+
+export default function Estado(props) {
+
+  const [state, setState] = useState(0)
+
+  return (
+    <Layout titulo="Componente com Estado">
+
+    </Layout>
+  )
+}
+```
+
+- E para usarmos a função(_setState_) que altera o valor de _state_... vamos criar uma função _incrementar_ e essa função vai chamar a função _setState_ que vai pegar valor atual(_state_) + 1:
+
+``` JSX
+import { useState } from "react"
+
+import Layout from "../components/Layout"
+
+export default function Estado(props) {
+
+  const [state, setState] = useState(0)
+
+  function incrementar() {
+    setState(state + 1)
+  }
+
+  return (
+    <Layout titulo="Componente com Estado">
+
+    </Layout>
+  )
+}
+```
+
+- Agora, para visualizarmos a alteração acontecendo... vamos criar uma _div_ e vamos interpolar o valor de _state_:
+
+``` JSX
+import { useState } from "react"
+
+import Layout from "../components/Layout"
+
+export default function Estado(props) {
+
+  const [state, setState] = useState(0)
+
+  function incrementar() {
+    setState(state + 1)
+  }
+
+  return (
+    <Layout titulo="Componente com Estado">
+      <div>{state}</div>
+    </Layout>
+  )
+}
+```
+
+- Em seguida, vamos criar um _button_ o qual vai chamar o evento _onClick_ quando ele for acionado. E esse evendo _onClick_ irá chamar chamar a função de _incrementar_:
+
+``` JSX
+import { useState } from "react"
+
+import Layout from "../components/Layout"
+
+export default function Estado(props) {
+
+  const [state, setState] = useState(0)
+
+  function incrementar() {
+    setState(state + 1)
+  }
+
+  return (
+    <Layout titulo="Componente com Estado">
+      <div>{state}</div>
+      <button onClick={incrementar}>Incrementar</button>
+    </Layout>
+  )
+}
+```
+
+## Usando API #01
+

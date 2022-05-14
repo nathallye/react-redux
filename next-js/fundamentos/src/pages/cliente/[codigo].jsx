@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 
 export default function ClientePorCodigo(props) {
   const router = useRouter()
-  console.log(router)
+  // console.log(router)
   
   return (
     <Layout titulo="Navegação dinâmica">
