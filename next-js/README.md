@@ -1248,3 +1248,563 @@ export default function Estado(props) {
 
 ## Usando API #01
 
+A priori vamos trabalhar com o arquivo _hello.js_ que encontramos dentro de _src/pages/api_. 
+E uma coisa que vamos mexer nesse arquivo, é retornar uma informação _metodo_ que é exatamente o _método http_ que foi utilizado para fazer a requisição. Essa é uma das farmas dentro da API que conseguimos a partir de uma única URL tratar diferentes tipos de requisições(GET, POST, PUT...):
+
+``` JS
+export default function handler(req, res) {
+  res.status(200).json({ 
+    metodo: req.method,
+    name: 'John Doe' 
+  })
+}
+```
+
+- Agora, vamos criar dentro de _pages/api_ uma pasta chamada clientes/_clients_ e dentro dela um arquivo chamado _index.js_;
+
+- Dentro desse arquivo que criamos no passo anterior, vamos criar uma funcão _handle_ que vai receber como parãmetro a requisiçaõ/_req_ e a resposta/_res_ e vamos exportá-la por padrão/_export default_:
+
+``` JS
+export default function handler(req, res) {
+  
+}
+```
+
+- Normalmente vamos precisar ao menos usar a _res_ para retornar algo para quem fez a requisição, vamos retornar a resposta com o status code 200 (_res.json(200)_ e vamos usar o _.send()_ no final para que essa mensagem seja enviada:
+
+``` JS
+export default function handler(req, res) {
+  res.status(200).send()
+}
+```
+
+- Também podemos retornar um JSON com os dados do cliente(_res.status(200).json({})_):
+
+``` JS
+export default function handler(req, res) {
+  res.status(200).json({
+    id: 3,
+    nome: 'Nathallye',
+    age: 23
+  })
+}
+```
+
+- Podemos também usar estruturas condicionais para verificar qual o método e retornar de acordo com o que foi solicitado na requisição:
+
+``` JS
+export default function handler(req, res) {
+  if(req.method === 'GET') {
+    handleGet(req, res) // caso o metodo seja igual a GET será chamada a função handleGET passando os parâmetros de requisição/req e resposta/res
+  } 
+}
+
+function handleGet(re, res) { // nesse caso colocamos o retorno da requição GET em uma função própria
+  res.status(200).json({
+    id: 3,
+    nome: 'Nathallye',
+    age: 23
+  })
+}
+```
+
+- E caso o método solicitado não esteja definido vamos retornar o status code 405(url não suportada):
+
+``` JS
+export default function handler(req, res) {
+  if(req.method === 'GET') {
+    handleGet(req, res)
+  } else {
+    res.status(405).send()
+  }
+}
+
+function handleGet(re, res) {
+  res.status(200).json({
+    id: 3,
+    nome: 'Nathallye',
+    age: 23
+  })
+}
+```
+
+## Usando API #02
+
+- Para obtermos informações a partir da query(parâmetros passados na url) podemos criar um arquivo dentro de _src/pages/api/clients_ com url dinâmica chamado _[codigo].js_ os _[]_ garantem que a url vai ser dinâmica.
+E dentro desse arquivo vamos definir uma função, do mesmo modo que já definimos anteriormente:
+
+``` JS
+export default function handler(req, res) {
+  res.status(200).json({
+
+  })
+}
+```
+
+- Como vamos receber um código dinâmicamente, podemos retornar nesse json o _codigo_ que vamos receber a partir requisição de dentro da query/_req.query.codigo_:
+
+``` JS
+export default function handler(req, res) {
+  // exemplo de requisição: GET Http://localhost:3000/api/clients/1
+  res.status(200).json({
+    codigo: req.query.codigo // retorno: {"codigo": "1"}
+  })
+}
+```
+
+## Integração do Font-end com API
+
+- Para isso, vamos criar um arquivo chamado _integracao.jsx_ dentro do diretório _src/pages_;
+
+- Dentro desse arquivo vamos criar um componente funcional chamdo _Integracao_, seguindo o mesmo padrão que já vimos/criamos anteriormente:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+  return (
+    <Layout>
+
+    </Layout>
+  )
+}
+```
+
+- E dentro desse componente, vamos acessar as informações que estão no Back-end(API), nesse caso só é um objeto, mas poderia ser um array de objetos.
+E para obtermos essas informações do back-end iremos trabalhar com assíncronismo... poderiamos instalar a biblioteca _axel_ que é um cliente http que é o muito utilizado, mas nesse caso vamos utilizar o proprio _fetch_ para obter essas informações:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  fetch('')
+
+  return (
+    <Layout>
+
+    </Layout>
+  )
+}
+```
+
+- A url que precisamos para obter o _cliente 1_ é essa _http://localhost:3000/api/clients/1_, e vamos colocar dentro do _fetch_ e isso vai retornar uma promisse, de tal forma se fizermos _.then()_ vamos ter uma resposta _.then(res)_ e assim podemos chamar a resposta e pegar o json dessa resposta _.then(res => resp.json())_ que é uma promisse:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  fetch('http://localhost:3000/api/clients/1')
+    .then(resp => resp.json())
+
+  return (
+    <Layout>
+
+    </Layout>
+  )
+}
+```
+
+- E no segundo _.then_ vamos ter acesso aos _dados_ e podemos mostrar esses _dados_ através do console.log. E tudo isso que está nesse _fetch_ vai acontecer de forma assíncrona:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  fetch('http://localhost:3000/api/clients/1')
+    .then(resp => resp.json())
+    .then(dados => console.log(dados))
+
+  return (
+    <Layout>
+
+    </Layout>
+  )
+}
+```
+
+- Agora, dentro de _src/pages/index.jsx_ e vamos criar um link para conseguirmos acessa esse componente _integracao_:
+
+``` JSX
+import Navegador from "../components/Navegador"
+
+export default function Inicio() {
+  return (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      flexWrap: "wrap",
+      height: "100vh"
+    }}>
+      <Navegador destino="/estiloso" texto="Estiloso" cor="cadetblue"/>
+      <Navegador destino="/exemplo" texto="Exemplo"/>
+      <Navegador destino="/jsx" texto="JSX" cor="brown"/>
+      <Navegador destino="/navegacao" texto="Navegação #01" cor="green"/> 
+      <Navegador destino="/cliente/1" texto="Navegação #02" cor="hotpink"/> 
+      <Navegador destino="/estado" texto="Componente com Estado" cor="coral"/> 
+      <Navegador destino="/integracao" texto="Integração com API" cor="lightSteelBlue"/> 
+    </div>
+  )
+}
+```
+
+- E vamos criar uma tabela/_ul_ e itens/_li_ para inserir as informações:
+
+``` JSX
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => console.log(dados))
+
+  return (
+    <Layout titulo="Integração com API">
+      <ul>
+        <li>Código: </li>
+        <li>Nome: </li>
+        <li>E-mail: </li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- Para ter essas informações definidas na nossa aplicação vamos precisar criar um estado o qual vai receber um objeto vazio _[client, setClient] = useState({})_:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [client, setClient] = useState({})
+
+  fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => console.log(dados))
+
+  return (
+    <Layout titulo="Integração com API">
+      <ul>
+        <li>Código: </li>
+        <li>Nome: </li>
+        <li>E-mail: </li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- E vamos chamar o _setClient_ quando uma requisição for feita passando os _dados_ recebidos que são justamente os dados dos clientes que recebemos na requisição:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [client, setClient] = useState({})
+
+  fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+
+  return (
+    <Layout titulo="Integração com API">
+      <ul>
+        <li>Código: </li>
+        <li>Nome: </li>
+        <li>E-mail: </li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- E para chamarmos esse _fetch_ a partir do click de um botão vamos colocar ele dentro de uma função a qual se chamará _getClient_:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [client, setClient] = useState({})
+
+  function getClient() {
+    fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+  }
+  
+  return (
+    <Layout titulo="Integração com API">
+      <ul>
+        <li>Código: </li>
+        <li>Nome: </li>
+        <li>E-mail: </li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- E vamos criar um _input_ do tipo _number_ e um _button_ que vai receber o evento de _onClick_ o qual quando capturar o click do usuário no botão vai chamar a função _getClient_ e quando esse cliente for obtido essa função vai chamar _setClient_ passando os _dados_ e irá alterar o estado do objeto _cliente_:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [client, setClient] = useState({})
+
+  function getClient() {
+    fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+  }
+
+  return (
+    <Layout titulo="Integração com API">
+      <div>
+        <input type="number" />
+        <button onClick={getClient}>Obter Cliente</button>
+      </div>
+
+      <ul>
+        <li>Código: </li>
+        <li>Nome: </li>
+        <li>E-mail: </li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- Agora, vamos interpolar na tabela as informações do _client_ que iremos obter através das requisições:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [client, setClient] = useState({})
+
+  function getClient() {
+    fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+  }
+
+  return (
+    <Layout titulo="Integração com API">
+      <div>
+        <input type="number" />
+        <button onClick={getClient}>Obter Cliente</button>
+      </div>
+
+      <ul>
+        <li>Código: {client.codigo}</li>
+        <li>Nome: {client.nome}</li>
+        <li>E-mail: {client.email}</li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- Por hora, se clicarmos no "Obter Cliente" ele só irá trazer as informações do nosso cliente com o código 1, que especificações no _fetch_. 
+Como fazemos para que inserindo um código no _input_ seja retornado as informações do cliente com esse determinado código? Basicamente, vamos precisar criar um outro estado para guardarmos esse informação do _codigo_:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [codigo, setCodigo] = useState(1)
+  const [client, setClient] = useState({})
+
+  function getClient() {
+    fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+  }
+
+  return (
+    <Layout titulo="Integração com API">
+      <div>
+        <input type="number" />
+        <button onClick={getClient}>Obter Cliente</button>
+      </div>
+
+      <ul>
+        <li>Código: {client.codigo}</li>
+        <li>Nome: {client.nome}</li>
+        <li>E-mail: {client.email}</li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- E vamos associar _codigo_ ao valor do _input_:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [code, setCode] = useState(1)
+  const [client, setClient] = useState({})
+
+  function getClient() {
+    fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+  }
+
+  return (
+    <Layout titulo="Integração com API">
+      <div>
+        <input type="number" value={code}/>
+        <button onClick={getClient}>Obter Cliente</button>
+      </div>
+
+      <ul>
+        <li>Código: {client.codigo}</li>
+        <li>Nome: {client.nome}</li>
+        <li>E-mail: {client.email}</li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- E para conseguirmos alterar o valor de _codigo_ vamos inserir o evento _onChange_ para quando houver uma mudança ele vai pegar o próprio evento/_e_ e obter o valor a partir de _e.target.value_ e passar para o _setCodigo_ para alterar o estado do objeto _codigo_:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [code, setCode] = useState(1)
+  const [client, setClient] = useState({})
+
+  function getClient() {
+    fetch("http://localhost:3000/api/clients/1")
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+  }
+
+  return (
+    <Layout titulo="Integração com API">
+      <div>
+        <input 
+          type="number" 
+          value={code}
+          onChange={e => setCode(e.target.value)}
+        />
+        <button onClick={getClient}>Obter Cliente</button>
+      </div>
+
+      <ul>
+        <li>Código: {client.codigo}</li>
+        <li>Nome: {client.nome}</li>
+        <li>E-mail: {client.email}</li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- Agora que temos o valor do código, podemos usar uma template string para considerar o uso no código na chamada da API:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [code, setCode] = useState(1)
+  const [client, setClient] = useState({})
+
+  function getClient() {
+    fetch(`http://localhost:3000/api/clients/${code}`)
+    .then(resp => resp.json())
+    .then(dados => setClient(dados))
+  }
+
+  return (
+    <Layout titulo="Integração com API">
+      <div>
+        <input 
+          type="number" 
+          value={code}
+          onChange={e => setCode(e.target.value)}
+        />
+        <button onClick={getClient}>Obter Cliente</button>
+      </div>
+
+      <ul>
+        <li>Código: {client.codigo}</li>
+        <li>Nome: {client.nome}</li>
+        <li>E-mail: {client.email}</li>
+      </ul>
+    </Layout>
+  )
+}
+```
+
+- Outra possibilidade que temos é tratar a função como _async_, e com isso vamos escrever o código um pouco diferente.
+Vamos ter uma constante resposta/_resp_ que recebe o _await_ chamando o _fetch_ que recebe a url da requisição, o _await_ significa que ele tem que esperar e somente quando ele finalizar essa chamada ele passa para a próxima linha. 
+E a próxima linha, teremos uma constante _dados_ que recebe _await_ retornando a resposta em json _resp.json_, e somente quando _dados_ estiver pronto essa ele passa para a próxima linha, e por fim, irá chamar o _setCliente_ passando os _dados_ obtidos:
+
+``` JSX
+import { useState } from "react"
+import Layout from "../components/Layout"
+
+export default function Integracao() {
+
+  const [code, setCode] = useState(1)
+  const [client, setClient] = useState({})
+
+  async function getClient() {
+    const resp = await fetch(`http://localhost:3000/api/clients/${code}`)
+    const dados = await resp.json()
+    setClient(dados)
+
+    // fetch(`http://localhost:3000/api/clients/${code}`)
+    // .then(resp => resp.json())
+    // .then(dados => setClient(dados))
+  }
+
+  return (
+    <Layout titulo="Integração com API">
+      <div>
+        <input 
+          type="number" 
+          value={code}
+          onChange={e => setCode(e.target.value)}
+        />
+        <button onClick={getClient}>Obter Cliente</button>
+      </div>
+
+      <ul>
+        <li>Código: {client.codigo}</li>
+        <li>Nome: {client.nome}</li>
+        <li>E-mail: {client.email}</li>
+      </ul>
+    </Layout>
+  )
+}
+```
