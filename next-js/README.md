@@ -1808,3 +1808,33 @@ export default function Integracao() {
   )
 }
 ```
+
+## Modelos de Pré-renderização
+
+Documentação: https://nextjs.org/docs/basic-features/pages.
+
+Na documentação do Next.js em recuros básicos, encontramos informações do que ele chama de _pre-rendering_ e ele informa que por padrão o Next.js pré-renderiza cada uma das páginas da aplicação. E ele trabalha com duas formas de pré-renderizações, que são renderizações que acontecem do lado do servido e isso gera um impacto de desempenho muito grande.
+
+- Conteúdo gerado do lado do cliente:
+
+Nessa imagem temos o lado do cliente/_C_ e o lado do servidor/_S_, quando temos o conteúdo gerado do lado do cliente básicamente o que vai acontecer é que do lado do cliente vai ser feita uma requisição para o servidor, o servidor vai retornar uma página HTML. E dentro dessa página HTML vai ter um código JavaScript e esse código _JS_ será responsável por gerar todo o conteúdo dinâmicamente dentro do browser do usuário. Esse é o cenário que precisamos ter apenas uma única página HMTL, pois estamos trabalhando com aplicação _SPA_(Single Page Application/ Aplicativo de página única):
+
+![image](images/SPA.jpeg)
+
+Esse modelo também é suportado pelo Next.js, mas não cai em nenhum desses dois cenários que ele chama de _pre-rendering_.
+
+- Conteúdo gerado do lado do servidor:
+
+Nessa imagem da mesma forma que no anterior, temos o lado do cliente/_C_ e o lado do servidor/_S_, e teremos uma requisição e uma resposta para essa requisição. E essa requisição e essa resposta vai depender do tipo de conteúdo que vamos gerar, o que reflete no tipo de _pre-rendering_:
+
+![image](images/SSG1.jpeg)
+
+Vamos trabalhar na primeira opção que é Geração de Conteúdo Estática/_Static Generation_, que inclusive é a recomendada... Nesse cenário, durante o momento que rodarmos o comando `npm run build` ele vai gerar a aplicação para produção, e ele vai informar que aconteceu um _Warning_ e dentro de _Navegador.jsx_ temos que passar a referência _passHref_ que ele vai passar isso para dentro de um link, colocando essa propriedade ele já não vai mais gerar a advertência e dessa forma vamos gerar novamente o build com o comando `npm run build` e nesse modendo que ele está gerando o build é que ele vai gerar o conteúdo estático, e básicamente o que ele vai gerar é um arquivo HTML e esse conteúdo será servido de forma estática e será reusado a cada requisição.
+Basicamente o que acontece, é que do lado do servidor foi gerado uma página HTML de forma estática e sempre que o cliente fizer uma requisição ele vai devolver esse arquivo pronto. Nesse cenário estamos trabalhando com aplicação _SSG_(Static Site Generator/ Geração de Site Estático):
+
+![image](images/SSG2.jpeg)
+
+
+## CRUD usando o Next.js
+
+- Projeto disponível no repositório: https://github.com/nathallyet/next-crud
