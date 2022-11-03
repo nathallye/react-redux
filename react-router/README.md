@@ -1,5 +1,5 @@
 # React Router
-Biblioteaca para organizar a interface gráfica.
+Biblioteca para organizar a interface gráfica.
 
 ## Navegação com React Router
 
